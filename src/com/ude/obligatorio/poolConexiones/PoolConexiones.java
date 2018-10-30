@@ -33,47 +33,55 @@ public class PoolConexiones implements IPoolConexiones {
 		this.password = password;
 		this.driver = driver;
 
-		this.tope = 0;
+		this.tope = -1;
 		this.tamanio = tamanio;
 		this.creadas = 0;
 		this.nivelTransaccionalidad = Connection.TRANSACTION_NONE;
 
 		conexiones = new Conexion[tamanio];
-	}
+	}	// PoolConexiones
+	
 	@Override
 	public IConexion obtenerConexion(boolean modifica) {
 
 		IConexion conexion = null;
-		if(tope+1 < tamanio) {
+		if ((tope + 1) < tamanio) {
 			try {
-
-				tope = tope++;
-				creadas = creadas++;
-				nivelTransaccionalidad = modifica ? Connection.TRANSACTION_SERIALIZABLE : Connection.TRANSACTION_NONE;
+				creadas++;
+				nivelTransaccionalidad = (modifica ? Connection.TRANSACTION_SERIALIZABLE : Connection.TRANSACTION_NONE);
 
 				Class.forName("com.mysql.jdbc.Driver");
 				Connection connection = DriverManager.getConnection(url, user, password);
 				conexion = new Conexion(connection);
-
-				conexiones[tope] = conexion;
-
-			} catch (SQLException | ClassNotFoundException ex) {
+				conexiones[++tope] = conexion;
+			}
+			catch (SQLException | ClassNotFoundException ex) {
 				ex.printStackTrace();
 			}
 		}
 		return conexion;
-	}
+	}	// obtenerConexion
 	
+	/*
+	 * Liberar una conexion del pool, no necesariamente la ultima.
+	 */
 	@Override
 	public void liberarConexion(IConexion icon, boolean ok) {
 		try {
-			Connection con = icon.getCon();
+			int i=0, j;
+			
+			while (conexiones[i] != icon)
+				i++;
+			Connection con = conexiones[i].getCon();
 			con.close();
-			tope --;
-		} catch (SQLException e) {
+			// Aca bajar las conexiones desde la siguiente hasta el tope
+			// para que no quede un hueco.
+			for (j = i+1; j < tope; j++)
+				conexiones[j] = conexiones[j + 1]; 
+			tope--;
+		}
+		catch (SQLException e) {
 			e.printStackTrace();
 		}
-	}
-
-
-}
+	}	// liberarConexion
+}	// PoolConexiones
