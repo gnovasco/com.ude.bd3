@@ -1,8 +1,8 @@
-package com.ude.practico.logicaPersistencia.poolConexiones;
+package com.ude.obligatorio.poolConexiones;
 
 import java.sql.Connection;
 
-import com.ude.practico.logicaPersistencia.poolConexiones.interfaces.IConexion;
+import com.ude.obligatorio.poolConexiones.interfaces.IConexion;
 
 public class Conexion implements IConexion {
 	
@@ -11,6 +11,10 @@ public class Conexion implements IConexion {
 	public Conexion(Connection connection) {
 		con = connection;
 	}
-	
 
+
+	@Override
+	public Connection getCon() {
+		return con;
+	}
 }

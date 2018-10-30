@@ -1,4 +1,4 @@
-package com.ude.practico.logicaPersistencia.poolConexiones.interfaces;
+package com.ude.obligatorio.poolConexiones.interfaces;
 
 import java.sql.Connection;
 

@@ -1,11 +1,11 @@
-package com.ude.practico.logicaPersistencia.poolConexiones;
+package com.ude.obligatorio.poolConexiones;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-import com.ude.practico.logicaPersistencia.poolConexiones.interfaces.IConexion;
-import com.ude.practico.logicaPersistencia.poolConexiones.interfaces.IPoolConexiones;
+import com.ude.obligatorio.poolConexiones.interfaces.IConexion;
+import com.ude.obligatorio.poolConexiones.interfaces.IPoolConexiones;
 
 public class PoolConexiones implements IPoolConexiones {
 	
@@ -39,8 +39,6 @@ public class PoolConexiones implements IPoolConexiones {
 		this.nivelTransaccionalidad = Connection.TRANSACTION_NONE;
 
 		conexiones = new Conexion[tamanio];
-
-		
 	}
 	@Override
 	public IConexion obtenerConexion(boolean modifica) {
