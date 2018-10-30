@@ -19,8 +19,8 @@ public class DAOFolios {
 
     public DAOFolios() {
         consultas = new Consultas();
-        //TODO: traer los datos correspondientes y completarlos .... tambien dejar el poolConexiones como singleton.
-        iPoolConexiones =  new PoolConexiones("","","",10,"");
+        //TODO: traer los datos correspondientes y completarlos
+        iPoolConexiones = PoolConexiones.getPoolConexiones("","","",10,"");
     }
 
     public boolean member(String cod) throws PersistenciaException {

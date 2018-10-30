@@ -20,6 +20,8 @@ public class PoolConexiones implements IPoolConexiones {
 	private int nivelTransaccionalidad;
 	
 	private IConexion[] conexiones;
+
+	private static PoolConexiones poolConexiones;
 	
 	/* 
 	 * Constructor de la clase. Realiza la carga del driver, solicita memoria para el arreglo con tope e inicializa
@@ -43,9 +45,12 @@ public class PoolConexiones implements IPoolConexiones {
 	/*
 	 * Obtener la unica instancia del pool de conexiones.
 	 */
-	public getPoolConexiones() {
-		return this;
-	}	// getPoolConexiones
+	public static PoolConexiones getPoolConexiones(String url,String user,String password,int tamanio,String driver) {
+		if(poolConexiones == null){
+			poolConexiones = new PoolConexiones("","","",10,"");
+		}
+		return poolConexiones;
+	}
 	
 	@Override
 	public IConexion obtenerConexion(boolean modifica) {

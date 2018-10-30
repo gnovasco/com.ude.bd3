@@ -26,8 +26,8 @@ public class DAORevisiones {
 
         codigoFolio = codFol;
         consultas = new Consultas();
-        //TODO: traer los datos correspondientes y completarlos .... tambien dejar el poolConexiones como singleton.
-        iPoolConexiones =  new PoolConexiones("","","",10,"");
+        //TODO: traer los datos correspondientes y completarlos.
+        iPoolConexiones = PoolConexiones.getPoolConexiones("","","",10,"");
 
     }
 
