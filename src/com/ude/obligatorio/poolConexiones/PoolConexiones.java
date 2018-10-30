@@ -22,12 +22,11 @@ public class PoolConexiones implements IPoolConexiones {
 	private IConexion[] conexiones;
 	
 	/* 
-	 * Constructor de la clase. Realiza la carga
-	 * del driver, solicita memoria para el arreglo con tope e inicializa
-	 * los distintos atributos. 
+	 * Constructor de la clase. Realiza la carga del driver, solicita memoria para el arreglo con tope e inicializa
+	 * los distintos atributos.
+	 * Es privado para que la clase sea singleton.
 	 */
-	public PoolConexiones(String url,String user,String password,int tamanio,String driver) {
-
+	private PoolConexiones(String url,String user,String password,int tamanio,String driver) {
 		this.url = url;
 		this.user = user;
 		this.password = password;
@@ -40,6 +39,13 @@ public class PoolConexiones implements IPoolConexiones {
 
 		conexiones = new Conexion[tamanio];
 	}	// PoolConexiones
+	
+	/*
+	 * Obtener la unica instancia del pool de conexiones.
+	 */
+	public getPoolConexiones() {
+		return this;
+	}	// getPoolConexiones
 	
 	@Override
 	public IConexion obtenerConexion(boolean modifica) {

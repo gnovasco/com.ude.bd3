@@ -17,14 +17,13 @@ public class DAOFolios {
     private Consultas consultas;
     private IPoolConexiones iPoolConexiones;
 
-    public DAOFolios(){
+    public DAOFolios() {
         consultas = new Consultas();
         //TODO: traer los datos correspondientes y completarlos .... tambien dejar el poolConexiones como singleton.
         iPoolConexiones =  new PoolConexiones("","","",10,"");
     }
 
     public boolean member(String cod) throws PersistenciaException {
-
         boolean isMember = false;
         try {
 
@@ -38,17 +37,15 @@ public class DAOFolios {
             pstmt.setString(1, cod);
 
             ResultSet rs = pstmt.executeQuery();
-            if(rs.next()){
-                isMember = true;
-            }
-
+            isMember = rs.isBeforeFirst();
             pstmt.close();
-
-        } catch (SQLException e) {
+        }
+        catch (SQLException e) {
             throw new PersistenciaException("Error al intentar obtener un folio",e);
         }
         return isMember;
     }
+    
     public void insert(Folio fol) throws PersistenciaException {
         try {
 
@@ -71,7 +68,8 @@ public class DAOFolios {
 
             pstmt.close();
 
-        } catch (SQLException e) {
+        }
+        catch (SQLException e) {
             throw new PersistenciaException("Error al intentar agregar un folio",e);
         }
     }
