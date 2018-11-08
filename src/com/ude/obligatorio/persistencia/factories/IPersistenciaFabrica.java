@@ -3,12 +3,8 @@ package com.ude.obligatorio.persistencia.factories;
 public interface IPersistenciaFabrica
 {
 	/*
-	 * Guardar en el mecanismo de persistencia.
+	 * Crear los DAO para la persistencia.
 	 */
-	boolean guardar();
-	
-	/*
-	 * Leer del mecanismo de persistencia.
-	 */
-	int leer();
+	public IDAOFolios crearFolios();
+	public IDAORevisiones crearRevisiones();
 }

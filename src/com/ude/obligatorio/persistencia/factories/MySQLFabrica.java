@@ -2,13 +2,11 @@ package com.ude.obligatorio.persistencia.factories;
 
 public class MySQLFabrica implements IPersistenciaFabrica
 {
-	/*
-	 * Guardar en una base de datos MySQL.
-	 */
-	boolean guardar();
+	public IDAOFolios crearFolios() {
+		return new DAOFoliosMySQL;
+	}
 	
-	/*
-	 * Leer de una base de datos MySQL.
-	 */
-	int leer();
+	public IDAORevisiones crearRevisiones() {
+		return new DAORevisionesMySQL;
+	}
 }

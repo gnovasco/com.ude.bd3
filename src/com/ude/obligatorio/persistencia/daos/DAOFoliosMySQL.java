@@ -73,4 +73,24 @@ public class DAOFoliosMySQL implements IDAOFolios{
             throw new PersistenciaException("Error al intentar agregar un folio",e);
         }
     }
-}
+    
+    public Folio find() {
+    	
+    }
+    
+    public void delete() {
+    	
+    }
+    
+    public List<VOFolio> listarFolios() {
+    	
+    }
+    
+    public boolean esVacio() {
+    	
+    }
+    
+    public VOFolioMaxRev folioMasRevisado () {
+    	
+    }
+}c
