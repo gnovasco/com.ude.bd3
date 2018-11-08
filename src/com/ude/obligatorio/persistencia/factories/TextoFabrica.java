@@ -1,4 +1,4 @@
-package com.ude.obligatorio.TextoFabrica;
+package com.ude.obligatorio.persistencia.factories;
 
 public class TextoFabrica implements IPersistenciaFabrica
 {

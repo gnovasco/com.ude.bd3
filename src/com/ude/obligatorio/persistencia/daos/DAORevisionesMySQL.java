@@ -15,7 +15,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DAORevisiones {
+public class DAORevisionesMySQL implements IDAORevisiones{
 
     private String codigoFolio;
 
@@ -28,7 +28,6 @@ public class DAORevisiones {
         consultas = new Consultas();
         //TODO: traer los datos correspondientes y completarlos.
         iPoolConexiones = PoolConexiones.getPoolConexiones("","","",10,"");
-
     }
 
     /**

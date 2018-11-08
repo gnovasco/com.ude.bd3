@@ -1,4 +1,4 @@
-package com.ude.obligatorio.MySQLFabrica;
+package com.ude.obligatorio.persistencia.factories;
 
 public class MySQLFabrica implements IPersistenciaFabrica
 {

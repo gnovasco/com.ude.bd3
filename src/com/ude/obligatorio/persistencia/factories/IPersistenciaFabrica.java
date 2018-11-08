@@ -1,4 +1,4 @@
-package com.ude.obligatorio.IPersistenciaFabrica;
+package com.ude.obligatorio.persistencia.factories;
 
 public interface IPersistenciaFabrica
 {
