@@ -12,7 +12,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class DAOFolios {
+public class DAOFoliosMySQL implements IDAOFolios{
 
     private Consultas consultas;
     private IPoolConexiones iPoolConexiones;
@@ -97,4 +97,24 @@ public class DAOFolios {
             }
         }
     }
-}
+    
+    public Folio find() {
+    	
+    }
+    
+    public void delete() {
+    	
+    }
+    
+    public List<VOFolio> listarFolios() {
+    	
+    }
+    
+    public boolean esVacio() {
+    	
+    }
+    
+    public VOFolioMaxRev folioMasRevisado () {
+    	
+    }
+}c

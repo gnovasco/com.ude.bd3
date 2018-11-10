@@ -22,7 +22,7 @@ public class Folio {
 
         secuencia = new DAORevisiones(codigo);
     }
-
+    //test git
     public String getCodigo() {
         return codigo;
     }
