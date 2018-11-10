@@ -76,6 +76,7 @@ public class PoolConexiones implements IPoolConexiones {
 	/*
 	 * Liberar una conexion del pool, no necesariamente la ultima.
 	 */
+	//TODO: para que esta el boolean ??
 	@Override
 	public void liberarConexion(IConexion icon, boolean ok) {
 		try {

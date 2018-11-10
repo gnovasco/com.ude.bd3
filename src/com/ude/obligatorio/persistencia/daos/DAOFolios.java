@@ -25,10 +25,14 @@ public class DAOFolios {
 
     public boolean member(String cod) throws PersistenciaException {
         boolean isMember = false;
-        try {
 
-            IConexion iConexion = iPoolConexiones.obtenerConexion(true);
-            Connection con = iConexion.getCon();
+        IConexion iConexion = iPoolConexiones.obtenerConexion(true);
+        Connection con = iConexion.getCon();
+        if(con == null){
+            throw new PersistenciaException("No hay conexiones disponibles");
+        }
+
+        try {
 
             String query = consultas.obtenerFolio();
 
@@ -42,15 +46,27 @@ public class DAOFolios {
         }
         catch (SQLException e) {
             throw new PersistenciaException("Error al intentar obtener un folio",e);
+        }  finally {
+            try {
+                /* en cualquier caso, cierro la conexion */
+                if (con != null)
+                    con.close();
+            } catch (SQLException e) {
+                throw new PersistenciaException("Error al cerrando la conexion revision",e);
+            }
         }
         return isMember;
     }
     
     public void insert(Folio fol) throws PersistenciaException {
-        try {
 
-            IConexion iConexion = iPoolConexiones.obtenerConexion(true);
-            Connection con = iConexion.getCon();
+        IConexion iConexion = iPoolConexiones.obtenerConexion(true);
+        Connection con = iConexion.getCon();
+        if(con == null){
+            throw new PersistenciaException("No hay conexiones disponibles");
+        }
+        
+        try {
 
             String query = consultas.insertarFolio();
 
@@ -71,6 +87,14 @@ public class DAOFolios {
         }
         catch (SQLException e) {
             throw new PersistenciaException("Error al intentar agregar un folio",e);
+        }  finally {
+            try {
+                /* en cualquier caso, cierro la conexion */
+                if (con != null)
+                    con.close();
+            } catch (SQLException e) {
+                throw new PersistenciaException("Error al cerrando la conexion revision",e);
+            }
         }
     }
 }

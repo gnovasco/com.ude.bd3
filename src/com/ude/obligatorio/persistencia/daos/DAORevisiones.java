@@ -37,11 +37,14 @@ public class DAORevisiones {
      * @throws PersistenciaException
      */
     public void insBack(Revision rev) throws PersistenciaException {
+
+        IConexion iConexion = iPoolConexiones.obtenerConexion(true);
+        Connection con = iConexion.getCon();
+        if(con == null){
+            throw new PersistenciaException("No hay conexiones disponibles");
+        }
+
         try {
-
-            IConexion iConexion = iPoolConexiones.obtenerConexion(true);
-            Connection con = iConexion.getCon();
-
             String query = consultas.insertarRevision();
 
             PreparedStatement pstmt = con.prepareStatement(query);
@@ -55,9 +58,18 @@ public class DAORevisiones {
             pstmt.executeUpdate();
 
             pstmt.close();
+            iPoolConexiones.liberarConexion(iConexion,true);
 
         } catch (SQLException e) {
             throw new PersistenciaException("Error al intentar agregar una revision",e);
+        } finally {
+            try {
+                /* en cualquier caso, cierro la conexion */
+                if (con != null)
+                    con.close();
+            } catch (SQLException e) {
+                throw new PersistenciaException("Error al cerrando la conexion revision",e);
+            }
         }
     }
 
@@ -69,10 +81,14 @@ public class DAORevisiones {
     public int largo() throws PersistenciaException {
 
         int largo = -1;
-        try {
 
-            IConexion iConexion = iPoolConexiones.obtenerConexion(true);
-            Connection con = iConexion.getCon();
+        IConexion iConexion = iPoolConexiones.obtenerConexion(true);
+        Connection con = iConexion.getCon();
+        if(con == null){
+            throw new PersistenciaException("No hay conexiones disponibles");
+        }
+
+        try {
 
             String query = consultas.cantidadRevisiones();
 
@@ -84,9 +100,18 @@ public class DAORevisiones {
                 largo = rs.getInt("total");
             }
             pstmt.close();
+            iPoolConexiones.liberarConexion(iConexion,true);
 
         } catch (SQLException e) {
             throw new PersistenciaException("Error al obtener el total de revisiones",e);
+        } finally {
+            try {
+                /* en cualquier caso, cierro la conexion */
+                if (con != null)
+                    con.close();
+            } catch (SQLException e) {
+                throw new PersistenciaException("Error al cerrando la conexion revision",e);
+            }
         }
         return largo;
     }
@@ -99,36 +124,43 @@ public class DAORevisiones {
     public Revision kesimo(int numero) throws PersistenciaException {
 
         Revision revision = null;
+
+        IConexion iConexion = iPoolConexiones.obtenerConexion(true);
+        Connection con = iConexion.getCon();
+        if(con == null){
+            throw new PersistenciaException("No hay conexiones disponibles");
+        }
+
         try {
 
-            IConexion iConexion = iPoolConexiones.obtenerConexion(true);
-            if(iConexion != null) {
+            String query = consultas.obtenerRevision();
 
-                Connection con = iConexion.getCon();
+            PreparedStatement pstmt = con.prepareStatement(query);
+            pstmt.setInt(1, numero);
 
-                String query = consultas.obtenerRevision();
+            ResultSet rs = pstmt.executeQuery();
 
-                PreparedStatement pstmt = con.prepareStatement(query);
-                pstmt.setInt(1, numero);
+            if (rs.next()) {
 
-                ResultSet rs = pstmt.executeQuery();
+                int revNum = rs.getInt("numero");
+                String revDesc = rs.getString("descripcion");
 
-                if (rs.next()) {
-
-                    int revNum = rs.getInt("numero");
-                    String revDesc = rs.getString("descripcion");
-
-                    revision = new Revision(revNum, revDesc);
-                } else {
-                    throw new PersistenciaException("No existe revision para el numero ingresado");
-                }
-                pstmt.close();
+                revision = new Revision(revNum, revDesc);
             } else {
-                throw new PersistenciaException("No hay conexiones disponibles");
+                throw new PersistenciaException("No existe revision para el numero ingresado");
             }
+            pstmt.close();
 
         } catch (SQLException e) {
             throw new PersistenciaException("Error al obtener una revision",e);
+        } finally {
+            try {
+                /* en cualquier caso, cierro la conexion */
+                if (con != null)
+                    con.close();
+            } catch (SQLException e) {
+                throw new PersistenciaException("Error al cerrando la conexion revision",e);
+            }
         }
         return revision;
     }
@@ -141,33 +173,41 @@ public class DAORevisiones {
     public List<VORevision> listarRevisiones() throws PersistenciaException {
 
         List<VORevision> voRevisiones = new ArrayList<>();
+
+        IConexion iConexion = iPoolConexiones.obtenerConexion(true);
+        Connection con = iConexion.getCon();
+        if(con == null){
+            throw new PersistenciaException("No hay conexiones disponibles");
+        }
+
         try {
 
-            IConexion iConexion = iPoolConexiones.obtenerConexion(true);
+            String query = consultas.listarRevisiones();
 
-            if(iConexion != null) {
+            PreparedStatement pstmt = con.prepareStatement(query);
 
-                Connection con = iConexion.getCon();
+            ResultSet rs = pstmt.executeQuery();
 
-                String query = consultas.listarRevisiones();
+            while (rs.next()) {
 
-                PreparedStatement pstmt = con.prepareStatement(query);
+                int revNum = rs.getInt("numero");
+                String revDesc = rs.getString("descripcion");
 
-                ResultSet rs = pstmt.executeQuery();
+                VORevision voRevision = new VORevision(revNum, revDesc);
 
-                while (rs.next()) {
-
-                    int revNum = rs.getInt("numero");
-                    String revDesc = rs.getString("descripcion");
-
-                    VORevision voRevision = new VORevision(revNum, revDesc);
-
-                    voRevisiones.add(voRevision);
-                }
-                pstmt.close();
+                voRevisiones.add(voRevision);
             }
+            pstmt.close();
         } catch (SQLException e) {
             throw new PersistenciaException("Error al listar las revisiones",e);
+        } finally {
+            try {
+                /* en cualquier caso, cierro la conexion */
+                if (con != null)
+                    con.close();
+            } catch (SQLException e) {
+                throw new PersistenciaException("Error al cerrando la conexion revision",e);
+            }
         }
         return voRevisiones;
     }
@@ -177,24 +217,30 @@ public class DAORevisiones {
      * @throws PersistenciaException
      */
     public void borrarRevisiones() throws PersistenciaException {
+
+        IConexion iConexion = iPoolConexiones.obtenerConexion(true);
+        Connection con = iConexion.getCon();
+        if(con == null){
+            throw new PersistenciaException("No hay conexiones disponibles");
+        }
+
         try {
 
-            IConexion iConexion = iPoolConexiones.obtenerConexion(true);
+            String query = consultas.borrarRevisiones();
+            PreparedStatement pstmt = con.prepareStatement(query);
+            pstmt.executeUpdate();
+            pstmt.close();
 
-            if(iConexion != null) {
-
-                Connection con = iConexion.getCon();
-
-                String query = consultas.borrarRevisiones();
-
-                PreparedStatement pstmt = con.prepareStatement(query);
-
-                pstmt.executeUpdate();
-
-                pstmt.close();
-            }
         } catch (SQLException e) {
             throw new PersistenciaException("Error al borrar las revisiones",e);
+        }  finally {
+            try {
+                /* en cualquier caso, cierro la conexion */
+                if (con != null)
+                    con.close();
+            } catch (SQLException e) {
+                throw new PersistenciaException("Error al cerrando la conexion revision",e);
+            }
         }
     }
 }
