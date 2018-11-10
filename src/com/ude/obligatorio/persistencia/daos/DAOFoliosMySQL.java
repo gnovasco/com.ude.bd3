@@ -2,6 +2,8 @@ package com.ude.obligatorio.persistencia.daos;
 
 import com.ude.obligatorio.logica.Folio;
 import com.ude.obligatorio.logica.excepciones.PersistenciaException;
+import com.ude.obligatorio.logica.valueObjects.VOFolio;
+import com.ude.obligatorio.logica.valueObjects.VOFolioMaxRev;
 import com.ude.obligatorio.persistencia.consultas.Consultas;
 import com.ude.obligatorio.poolConexiones.PoolConexiones;
 import com.ude.obligatorio.poolConexiones.interfaces.IConexion;
@@ -11,13 +13,14 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 
 public class DAOFoliosMySQL implements IDAOFolios{
 
     private Consultas consultas;
     private IPoolConexiones iPoolConexiones;
 
-    public DAOFolios() {
+    public DAOFoliosMySQL() {
         consultas = new Consultas();
         //TODO: traer los datos correspondientes y completarlos
         iPoolConexiones = PoolConexiones.getPoolConexiones("","","",10,"");
@@ -99,22 +102,26 @@ public class DAOFoliosMySQL implements IDAOFolios{
     }
     
     public Folio find() {
-    	
+        //TODO IMPLLEMTENAR METODO
+        return null;
     }
     
     public void delete() {
-    	
+        //TODO IMPLLEMTENAR METODO
     }
     
     public List<VOFolio> listarFolios() {
-    	
+    	//TODO IMPLLEMTENAR METODO
+        return null;
     }
     
     public boolean esVacio() {
-    	
+        //TODO IMPLLEMTENAR METODO
+        return false;
     }
     
     public VOFolioMaxRev folioMasRevisado () {
-    	
+        //TODO IMPLLEMTENAR METODO
+        return null;
     }
-}c
+}

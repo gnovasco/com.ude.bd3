@@ -22,7 +22,7 @@ public class DAORevisionesMySQL implements IDAORevisiones{
     private Consultas consultas;
     private IPoolConexiones iPoolConexiones;
 
-    public DAORevisiones(String codFol) {
+    public DAORevisionesMySQL(String codFol) {
 
         codigoFolio = codFol;
         consultas = new Consultas();
@@ -72,6 +72,11 @@ public class DAORevisionesMySQL implements IDAORevisiones{
         }
     }
 
+    @Override
+    public void insBack() throws PersistenciaException {
+        //TODO IMPLLEMTENAR METODO
+    }
+
     /**
      * Largo de registros en la tabla revision
      * @return Devuelve -1 en caso de error.
@@ -113,6 +118,12 @@ public class DAORevisionesMySQL implements IDAORevisiones{
             }
         }
         return largo;
+    }
+
+    @Override
+    public Revision kesimo() throws PersistenciaException {
+        //TODO IMPLLEMTENAR METODO
+        return null;
     }
 
     /**
