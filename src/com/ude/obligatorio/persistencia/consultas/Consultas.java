@@ -3,36 +3,36 @@ package com.ude.obligatorio.persistencia.consultas;
 public class Consultas {
 
     // consultas Folio
-    public String insertarFolio(){
+    public String insertarFolio() {
         return "INSERT INTO Folio (codigo,caratula,paginas) VALUES (?,?,?)";
     }
-    public String listarFolios(){
+    public String listarFolios() {
         return "SELECT * FROM Folios";
     }
-    public String obtenerFolioMasRevisado(){
+    public String obtenerFolioMasRevisado() {
         return "SELECT MAX(cantRevisiones) FROM FolioMasRev";
     }
-    public String obtenerFolio(){
+    public String obtenerFolio() {
         return "SELECT * FROM Folios WHERE codigo = ?";
     }
 
     // consultas reviones
-    public String insertarRevision(){
+    public String insertarRevision() {
         return "INSERT INTO Revision (numrero,descripcion) VALUES (?,?)";
     }
-    public String borrarRevisiones(){
+    public String borrarRevisiones() {
         return "DELETE FROM Revision";
     }
-    public String listarRevisiones(){
+    public String listarRevisiones() {
         return "SELECT * FROM Revision";
     }
-    public String cantidadRevisiones(){
+    public String cantidadRevisiones() {
         return "SELECT COUNT(*) total FROM Revisiones";
     }
-    public String obtenerRevision(){
+    public String obtenerRevision() {
         return "SELECT * FROM Revision WHERE numero = ?";
     }
-    public String obtenerDescripcionRevision(){
+    public String obtenerDescripcionRevision() {
         return "SELECT descripcion FROM Revision WHERE codFolio = ? and numero = ?";
     }
 
