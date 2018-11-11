@@ -35,7 +35,7 @@ public class DAOFoliosMySQL implements IDAOFolios{
 
 
     public boolean member(String cod) throws PersistenciaException {
-        IConexion iConexion = iPoolConexiones.obtenerConexion(true);
+        IConexion iConexion = iPoolConexiones.obtenerConexion(false);
         Connection con = iConexion.getCon();
         PreparedStatement pstmt;
         ResultSet rs;
@@ -43,7 +43,7 @@ public class DAOFoliosMySQL implements IDAOFolios{
         boolean isMember = false;
 
         if (con == null) {
-            throw new PersistenciaException("No hay conexiones disponibles");
+            throw new PersistenciaException("No hay conexiones disponibles.");
         }
 
         try {
@@ -56,7 +56,7 @@ public class DAOFoliosMySQL implements IDAOFolios{
             pstmt.close();
         }
         catch (SQLException e) {
-            throw new PersistenciaException("Error al intentar obtener un folio",e);
+            throw new PersistenciaException("Error al intentar obtener un folio.", e);
         }
         finally {
             try {
@@ -65,7 +65,7 @@ public class DAOFoliosMySQL implements IDAOFolios{
                     con.close();
             }
             catch (SQLException e) {
-                throw new PersistenciaException("Error al cerrando la conexion revision",e);
+                throw new PersistenciaException("Error cerrar la conexion.", e);
             }
         }   // finally
         return isMember;
@@ -80,7 +80,7 @@ public class DAOFoliosMySQL implements IDAOFolios{
         int folPag;
 
         if (con == null) {
-            throw new PersistenciaException("No hay conexiones disponibles");
+            throw new PersistenciaException("No hay conexiones disponibles.");
         }
 
         try {
@@ -96,7 +96,7 @@ public class DAOFoliosMySQL implements IDAOFolios{
             pstmt.close();
         }
         catch (SQLException e) {
-            throw new PersistenciaException("Error al intentar agregar un folio",e);
+            throw new PersistenciaException("Error al intentar agregar un folio.",e);
         }
         finally {
             try {
@@ -105,17 +105,19 @@ public class DAOFoliosMySQL implements IDAOFolios{
                     con.close();
             }
             catch (SQLException e) {
-                throw new PersistenciaException("Error al cerrando la conexion revision",e);
+                throw new PersistenciaException("Error cerrando la conexion.", e);
             }
         }   // finally
     }   // insert
 
 
     public Folio find(String cod) {
-        IConexion iConexion = iPoolConexiones.obtenerConexion(true);
+        IConexion iConexion = iPoolConexiones.obtenerConexion(false);
         Connection con = iConexion.getCon();
         PreparedStatement pstmt;
         ResultSet rs;
+        String cod, car, query;
+        int pag, revs;
         Folio fol = null;
 
         try {
@@ -131,6 +133,7 @@ public class DAOFoliosMySQL implements IDAOFolios{
                     pag = rs.getInt("paginas");
                     /* Cómo se cargaría el DAORevisiones? */
                     sec = null;
+                    revs = rs.getInt("cantidadrevisiones");
                 }   // while
                 fol = new Folio(cod, car, pag, sec);
             }   // if
@@ -138,7 +141,7 @@ public class DAOFoliosMySQL implements IDAOFolios{
             pstmt.close();
         }
         catch (SQLException e) {
-            throw new PersistenciaException("Error al cerrando la conexion revision",e);
+            throw new PersistenciaException("Error cerrando la conexion.", e);
         }
         finally {
             return fol;
@@ -155,10 +158,14 @@ public class DAOFoliosMySQL implements IDAOFolios{
     	//TODO IMPLLEMTENAR METODO
         return null;
     }   // listarFolios
-
-
+    
+    
+    /*
+     * Devuelve 'true' si el diccionario está vacío, no hay folios;
+     * y 'false' en caso contrario.
+     */
     public boolean esVacio() {
-        IConexion iConexion = iPoolConexiones.obtenerConexion(true);
+        IConexion iConexion = iPoolConexiones.obtenerConexion(false);
         Connection con = iConexion.getCon();
         PreparedStatement pstmt;
         ResultSet rs;
@@ -168,23 +175,12 @@ public class DAOFoliosMySQL implements IDAOFolios{
             query = consultas.listarFolio();
             pstmt = con.prepareStatement(query);
             rs = pstmt.executeUpdate();
-            // Si hay un folio lo cargo en el VOFolio.
-            if (rs.isBeforeFirst()) {
-                while (rs.next()) {
-                    cod = rs.getString("codigo");
-                    car = rs.getString("caratula");
-                    pag = rs.getInt("paginas");
-                    /* Cómo se cargaría el DAORevisiones? */
-                    sec = null;
-                    revs = rs.getInt("cantidadrevisiones");
-                }   // while
-                fol = new Folio(cod, car, pag, sec, revs);
-            }   // if
+            res = !(rs.isBeforeFirst());
             rs.close();
             pstmt.close();
         }
         catch (SQLException e) {
-            throw new PersistenciaException("Error al cerrando la conexion revision",e);
+            throw new PersistenciaException("Error cerrando la conexion.", e);
         }
         
         return res;
@@ -192,22 +188,33 @@ public class DAOFoliosMySQL implements IDAOFolios{
     
     
     public VOFolioMaxRev folioMasRevisado () {
-        IConexion iConexion = iPoolConexiones.obtenerConexion(true);
+        IConexion iConexion = iPoolConexiones.obtenerConexion(false);
         Connection con = iConexion.getCon();
         PreparedStatement pstmt;
         ResultSet rs;
         VOFolioMaxRev res = null;
+        String cod, car, query;
+        int pag, revs;
         
         try {
             query = consultas.obtenerFolioMasRevisado();
             pstmt = con.prepareStatement(query);
             rs = pstmt.executeUpdate();
-                        
+            // Si hay un folio lo cargo.
+            if (rs.isBeforeFirst()) {
+                while (rs.next()) {
+                    cod = rs.getString("codigo");
+                    car = rs.getString("caratula");
+                    pag = rs.getInt("paginas");
+                    revs = rs.getInt("cantidadrevisiones");
+                }   // while
+                res = new VOFolio(cod, car, pag, revs);
+            }   // if                        
             rs.close();
             pstmt.close();
         }
         catch (SQLException e) {
-            throw new PersistenciaException("Error al cerrando la conexion revision",e);
+            throw new PersistenciaException("Error cerrando la conexion.", e);
         }
         
         return res;
