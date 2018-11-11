@@ -168,9 +168,20 @@ public class DAOFoliosMySQL implements IDAOFolios{
             query = consultas.listarFolio();
             pstmt = con.prepareStatement(query);
             rs = pstmt.executeUpdate();
-            pstmt.close();
-            res = rs.isBeforeFirst();
+            // Si hay un folio lo cargo en el VOFolio.
+            if (rs.isBeforeFirst()) {
+                while (rs.next()) {
+                    cod = rs.getString("codigo");
+                    car = rs.getString("caratula");
+                    pag = rs.getInt("paginas");
+                    /* Cómo se cargaría el DAORevisiones? */
+                    sec = null;
+                    revs = rs.getInt("cantidadrevisiones");
+                }   // while
+                fol = new Folio(cod, car, pag, sec, revs);
+            }   // if
             rs.close();
+            pstmt.close();
         }
         catch (SQLException e) {
             throw new PersistenciaException("Error al cerrando la conexion revision",e);
@@ -178,10 +189,27 @@ public class DAOFoliosMySQL implements IDAOFolios{
         
         return res;
     }   // esVacio
-
-
+    
+    
     public VOFolioMaxRev folioMasRevisado () {
-        //TODO IMPLLEMTENAR METODO
-        return null;
+        IConexion iConexion = iPoolConexiones.obtenerConexion(true);
+        Connection con = iConexion.getCon();
+        PreparedStatement pstmt;
+        ResultSet rs;
+        VOFolioMaxRev res = null;
+        
+        try {
+            query = consultas.obtenerFolioMasRevisado();
+            pstmt = con.prepareStatement(query);
+            rs = pstmt.executeUpdate();
+                        
+            rs.close();
+            pstmt.close();
+        }
+        catch (SQLException e) {
+            throw new PersistenciaException("Error al cerrando la conexion revision",e);
+        }
+        
+        return res;
     }   // folioMasRevisado
 }
