@@ -16,112 +16,172 @@ import java.sql.SQLException;
 import java.util.List;
 
 public class DAOFoliosMySQL implements IDAOFolios{
-
+    /*
+     * Atributos.
+     */
     private Consultas consultas;
     private IPoolConexiones iPoolConexiones;
+
+
+    /*
+     * Métodos.
+     */
 
     public DAOFoliosMySQL() {
         consultas = new Consultas();
         //TODO: traer los datos correspondientes y completarlos
         iPoolConexiones = PoolConexiones.getPoolConexiones("","","",10,"");
-    }
+    }   // DAOFoliosMySQL
+
 
     public boolean member(String cod) throws PersistenciaException {
-        boolean isMember = false;
-
         IConexion iConexion = iPoolConexiones.obtenerConexion(true);
         Connection con = iConexion.getCon();
-        if(con == null){
+        PreparedStatement pstmt;
+        ResultSet rs;
+        String query;
+        boolean isMember = false;
+
+        if (con == null) {
             throw new PersistenciaException("No hay conexiones disponibles");
         }
 
         try {
-
-            String query = consultas.obtenerFolio();
-
-            PreparedStatement pstmt = con.prepareStatement(query);
-
+            query = consultas.obtenerFolio();
+            pstmt = con.prepareStatement(query);
             pstmt.setString(1, cod);
-
-            ResultSet rs = pstmt.executeQuery();
+            rs = pstmt.executeQuery();
             isMember = rs.isBeforeFirst();
+            rs.close();
             pstmt.close();
         }
         catch (SQLException e) {
             throw new PersistenciaException("Error al intentar obtener un folio",e);
-        }  finally {
+        }
+        finally {
             try {
                 /* en cualquier caso, cierro la conexion */
                 if (con != null)
                     con.close();
-            } catch (SQLException e) {
+            }
+            catch (SQLException e) {
                 throw new PersistenciaException("Error al cerrando la conexion revision",e);
             }
-        }
+        }   // finally
         return isMember;
-    }
-    
-    public void insert(Folio fol) throws PersistenciaException {
+    }   // member
 
+
+    public void insert(Folio fol) throws PersistenciaException {
         IConexion iConexion = iPoolConexiones.obtenerConexion(true);
         Connection con = iConexion.getCon();
-        if(con == null){
+        PreparedStatement pstmt;
+        String folCod, folCar, query;
+        int folPag;
+
+        if (con == null) {
             throw new PersistenciaException("No hay conexiones disponibles");
         }
-        
+
         try {
-
-            String query = consultas.insertarFolio();
-
-            PreparedStatement pstmt = con.prepareStatement(query);
-
-            String folCod = fol.getCodigo();
-            String folCar = fol.getCaratula();
-            int folPag = fol.getPaginas();
-
+            query = consultas.insertarFolio();
+            pstmt = con.prepareStatement(query);
+            folCod = fol.getCodigo();
+            folCar = fol.getCaratula();
+            folPag = fol.getPaginas();
             pstmt.setString(1, folCod);
             pstmt.setString(2, folCar);
             pstmt.setInt(3,folPag);
-
             pstmt.executeUpdate();
-
             pstmt.close();
-
         }
         catch (SQLException e) {
             throw new PersistenciaException("Error al intentar agregar un folio",e);
-        }  finally {
+        }
+        finally {
             try {
                 /* en cualquier caso, cierro la conexion */
                 if (con != null)
                     con.close();
-            } catch (SQLException e) {
+            }
+            catch (SQLException e) {
                 throw new PersistenciaException("Error al cerrando la conexion revision",e);
             }
+        }   // finally
+    }   // insert
+
+
+    public Folio find(String cod) {
+        IConexion iConexion = iPoolConexiones.obtenerConexion(true);
+        Connection con = iConexion.getCon();
+        PreparedStatement pstmt;
+        ResultSet rs;
+        Folio fol = null;
+
+        try {
+            query = consultas.obtenerFolio();
+            pstmt = con.prepareStatement(query);
+            pstmt.setString(1, folCod);
+            rs = pstmt.executeUpdate();
+            // Si hay un folio lo cargo.
+            if (rs.isBeforeFirst()) {
+                while (rs.next()) {
+                    cod = rs.getString("codigo");
+                    car = rs.getString("caratula");
+                    pag = rs.getInt("paginas");
+                    /* Cómo se cargaría el DAORevisiones? */
+                    sec = null;
+                }   // while
+                fol = new Folio(cod, car, pag, sec);
+            }   // if
+            rs.close();
+            pstmt.close();
         }
-    }
-    
-    public Folio find() {
-        //TODO IMPLLEMTENAR METODO
-        return null;
-    }
-    
+        catch (SQLException e) {
+            throw new PersistenciaException("Error al cerrando la conexion revision",e);
+        }
+        finally {
+            return fol;
+        }
+    }   // find
+
+
     public void delete() {
         //TODO IMPLLEMTENAR METODO
-    }
-    
+    }   // delete
+
+
     public List<VOFolio> listarFolios() {
     	//TODO IMPLLEMTENAR METODO
         return null;
-    }
-    
+    }   // listarFolios
+
+
     public boolean esVacio() {
-        //TODO IMPLLEMTENAR METODO
-        return false;
-    }
-    
+        IConexion iConexion = iPoolConexiones.obtenerConexion(true);
+        Connection con = iConexion.getCon();
+        PreparedStatement pstmt;
+        ResultSet rs;
+        boolean res = true;
+        
+        try {
+            query = consultas.listarFolio();
+            pstmt = con.prepareStatement(query);
+            rs = pstmt.executeUpdate();
+            pstmt.close();
+            res = rs.isBeforeFirst();
+            rs.close();
+        }
+        catch (SQLException e) {
+            throw new PersistenciaException("Error al cerrando la conexion revision",e);
+        }
+        
+        return res;
+    }   // esVacio
+
+
     public VOFolioMaxRev folioMasRevisado () {
         //TODO IMPLLEMTENAR METODO
         return null;
-    }
+    }   // folioMasRevisado
 }
