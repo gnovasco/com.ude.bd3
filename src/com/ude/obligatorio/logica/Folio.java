@@ -3,7 +3,7 @@ package com.ude.obligatorio.logica;
 import com.ude.obligatorio.logica.excepciones.LogicaException;
 import com.ude.obligatorio.logica.excepciones.PersistenciaException;
 import com.ude.obligatorio.logica.valueObjects.VORevision;
-import com.ude.obligatorio.persistencia.daos.DAORevisiones;
+import com.ude.obligatorio.persistencia.daos.DAORevisionesMySQL;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,14 +13,14 @@ public class Folio {
     private String codigo;
     private String caratula;
     private int paginas;
-    private DAORevisiones secuencia;
+    private DAORevisionesMySQL secuencia;
 
     public Folio(String cod,String car,int pag){
         codigo = cod;
         caratula = car;
         paginas = pag;
 
-        secuencia = new DAORevisiones(codigo);
+        secuencia = new DAORevisionesMySQL(codigo);
     }
     //test git
     public String getCodigo() {
