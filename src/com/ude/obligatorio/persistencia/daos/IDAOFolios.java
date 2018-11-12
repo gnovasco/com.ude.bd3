@@ -8,5 +8,9 @@ public interface IDAOFolios {
 
 	public boolean member(String cod) throws PersistenciaException;
 	public void insert(Folio fol)  throws PersistenciaException;
-	
+	public Folio find(String cod);
+    public void delete();
+    public List<VOFolio> listarFolios();
+    public boolean esVacio();
+    public VOFolioMaxRev folioMasRevisado();
 }
