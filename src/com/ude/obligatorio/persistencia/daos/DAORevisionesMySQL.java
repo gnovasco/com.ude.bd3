@@ -250,4 +250,18 @@ public class DAORevisionesMySQL implements IDAORevisiones {
             }
         }
     }   // borrarRevisiones
+
+
+	@Override
+	public void insBack() throws PersistenciaException {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	@Override
+	public Revision kesimo() throws PersistenciaException {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

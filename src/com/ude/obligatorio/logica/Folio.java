@@ -1,28 +1,29 @@
 package com.ude.obligatorio.logica;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.ude.obligatorio.logica.excepciones.LogicaException;
 import com.ude.obligatorio.logica.excepciones.PersistenciaException;
 import com.ude.obligatorio.logica.valueObjects.VORevision;
-import com.ude.obligatorio.persistencia.daos.DAORevisiones;
-
-import java.util.ArrayList;
-import java.util.List;
+import com.ude.obligatorio.persistencia.daos.DAORevisionesMySQL;
+import com.ude.obligatorio.persistencia.daos.IDAORevisiones;
 
 public class Folio {
 
     private String codigo;
     private String caratula;
     private int paginas;
-    private DAORevisiones secuencia;
+    private IDAORevisiones secuencia;
 
     public Folio(String cod,String car,int pag){
         codigo = cod;
         caratula = car;
         paginas = pag;
 
-        secuencia = new DAORevisiones(codigo);
+        secuencia = new DAORevisionesMySQL(codigo);
     }
-    //test git
+
     public String getCodigo() {
         return codigo;
     }

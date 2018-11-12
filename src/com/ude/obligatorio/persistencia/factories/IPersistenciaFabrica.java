@@ -1,5 +1,8 @@
 package com.ude.obligatorio.persistencia.factories;
 
+import com.ude.obligatorio.persistencia.daos.IDAOFolios;
+import com.ude.obligatorio.persistencia.daos.IDAORevisiones;
+
 public interface IPersistenciaFabrica
 {
 	/*

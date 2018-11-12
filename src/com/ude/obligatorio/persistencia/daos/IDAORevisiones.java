@@ -13,4 +13,6 @@ public interface IDAORevisiones {
 	public Revision kesimo() throws PersistenciaException ;
 	public List<VORevision> listarRevisiones() throws PersistenciaException ;
 	public void borrarRevisiones() throws PersistenciaException ;
+	void insBack(Revision rev) throws PersistenciaException;
+	Revision kesimo(int numero) throws PersistenciaException;
 }

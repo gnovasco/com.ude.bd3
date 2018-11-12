@@ -4,11 +4,11 @@ import java.sql.Connection;
 
 import com.ude.obligatorio.poolConexiones.interfaces.IConexion;
 
-public class Conexion implements IConexion {
+public class ConexionMySQL implements IConexion {
 	
 	private Connection con;
 	
-	public Conexion(Connection connection) {
+	public ConexionMySQL(Connection connection) {
 		con = connection;
 	}
 
