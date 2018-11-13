@@ -7,7 +7,7 @@ import java.sql.SQLException;
 import com.ude.obligatorio.poolConexiones.interfaces.IConexion;
 import com.ude.obligatorio.poolConexiones.interfaces.IPoolConexiones;
 
-public class PoolConexiones implements IPoolConexiones {
+public class PoolConexionesMySQL implements IPoolConexiones {
 	
 	private String url;
 	private String user;
@@ -21,14 +21,14 @@ public class PoolConexiones implements IPoolConexiones {
 	
 	private IConexion[] conexiones;
 
-	private static PoolConexiones poolConexiones;
+	private static PoolConexionesMySQL poolConexiones;
 	
 	/* 
 	 * Constructor de la clase. Realiza la carga del driver, solicita memoria para el arreglo con tope e inicializa
 	 * los distintos atributos.
 	 * Es privado para que la clase sea singleton.
 	 */
-	private PoolConexiones(String url,String user,String password,int tamanio,String driver) {
+	private PoolConexionesMySQL(String url,String user,String password,int tamanio,String driver) {
 		this.url = url;
 		this.user = user;
 		this.password = password;
@@ -45,9 +45,9 @@ public class PoolConexiones implements IPoolConexiones {
 	/*
 	 * Obtener la unica instancia del pool de conexiones.
 	 */
-	public static PoolConexiones getPoolConexiones(String url,String user,String password,int tamanio,String driver) {
+	public static PoolConexionesMySQL getPoolConexiones(String url,String user,String password,int tamanio,String driver) {
 		if(poolConexiones == null){
-			poolConexiones = new PoolConexiones("","","",10,"");
+			poolConexiones = new PoolConexionesMySQL("","","",10,"");
 		}
 		return poolConexiones;
 	}

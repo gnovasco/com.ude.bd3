@@ -1,5 +1,11 @@
 package com.ude.obligatorio.persistencia.daos;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.List;
+
 import com.ude.obligatorio.logica.Folio;
 import com.ude.obligatorio.logica.excepciones.PersistenciaException;
 import com.ude.obligatorio.logica.valueObjects.VOFolio;
@@ -8,12 +14,6 @@ import com.ude.obligatorio.persistencia.consultas.Consultas;
 import com.ude.obligatorio.poolConexiones.PoolConexiones;
 import com.ude.obligatorio.poolConexiones.interfaces.IConexion;
 import com.ude.obligatorio.poolConexiones.interfaces.IPoolConexiones;
-
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.List;
 
 public class DAOFoliosMySQL implements IDAOFolios{
     /*
@@ -112,30 +112,32 @@ public class DAOFoliosMySQL implements IDAOFolios{
 
 
     public Folio find(String cod) {
+    	
         IConexion iConexion = iPoolConexiones.obtenerConexion(false);
         Connection con = iConexion.getCon();
+        
         PreparedStatement pstmt;
         ResultSet rs;
-        String cod, car, query;
-        int pag, revs;
+        
+        String car = "";
+        String query = "";
+        int pag = 0;
+        
         Folio fol = null;
 
         try {
             query = consultas.obtenerFolio();
             pstmt = con.prepareStatement(query);
-            pstmt.setString(1, folCod);
-            rs = pstmt.executeUpdate();
+            pstmt.setString(1, cod);
+            rs = pstmt.executeQuery();
             // Si hay un folio lo cargo.
             if (rs.isBeforeFirst()) {
                 while (rs.next()) {
-                    cod = rs.getString("codigo");
                     car = rs.getString("caratula");
                     pag = rs.getInt("paginas");
-                    /* Cómo se cargaría el DAORevisiones? */
-                    sec = null;
-                    revs = rs.getInt("cantidadrevisiones");
+
                 }   // while
-                fol = new Folio(cod, car, pag, sec);
+                fol = new Folio(cod, car, pag);
             }   // if
             rs.close();
             pstmt.close();
@@ -164,7 +166,7 @@ public class DAOFoliosMySQL implements IDAOFolios{
      * Devuelve 'true' si el diccionario está vacío, no hay folios;
      * y 'false' en caso contrario.
      */
-    public boolean esVacio() {
+    public boolean esVacio()throws PersistenciaException {
         IConexion iConexion = iPoolConexiones.obtenerConexion(false);
         Connection con = iConexion.getCon();
         PreparedStatement pstmt;
@@ -172,9 +174,9 @@ public class DAOFoliosMySQL implements IDAOFolios{
         boolean res = true;
         
         try {
-            query = consultas.listarFolio();
+            String query = consultas.listarFolios();
             pstmt = con.prepareStatement(query);
-            rs = pstmt.executeUpdate();
+            rs = pstmt.executeQuery();
             res = !(rs.isBeforeFirst());
             rs.close();
             pstmt.close();
@@ -196,27 +198,21 @@ public class DAOFoliosMySQL implements IDAOFolios{
         String cod, car, query;
         int pag, revs;
         
-        try {
-            query = consultas.obtenerFolioMasRevisado();
-            pstmt = con.prepareStatement(query);
-            rs = pstmt.executeUpdate();
-            // Si hay un folio lo cargo.
-            if (rs.isBeforeFirst()) {
-                while (rs.next()) {
-                    cod = rs.getString("codigo");
-                    car = rs.getString("caratula");
-                    pag = rs.getInt("paginas");
-                    revs = rs.getInt("cantidadrevisiones");
-                }   // while
-                res = new VOFolio(cod, car, pag, revs);
-            }   // if                        
-            rs.close();
-            pstmt.close();
+        /*try {
+        	//TODO implemetar
+        	//
         }
         catch (SQLException e) {
             throw new PersistenciaException("Error cerrando la conexion.", e);
-        }
+        }*/
         
         return res;
     }   // folioMasRevisado
+
+
+	@Override
+	public void delete(String cod) throws PersistenciaException {
+		// TODO Auto-generated method stub
+		
+	}
 }
