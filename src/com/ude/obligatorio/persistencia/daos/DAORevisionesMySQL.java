@@ -85,32 +85,29 @@ public class DAORevisionesMySQL implements IDAORevisiones {
      * @throws PersistenciaException
      */
     public int largo() throws PersistenciaException {
-
         int largo = -1;
-
         IConexion iConexion = iPoolConexiones.obtenerConexion(true);
         Connection con = iConexion.getCon();
-        if(con == null){
+        
+        if (con == null) {
             throw new PersistenciaException("No hay conexiones disponibles");
         }
 
         try {
-
             String query = consultas.cantidadRevisiones();
-
             PreparedStatement pstmt = con.prepareStatement(query);
-
             ResultSet rs = pstmt.executeQuery();
 
-            if(rs.next()) {
+            if (rs.next()) {
                 largo = rs.getInt("total");
             }
             pstmt.close();
             iPoolConexiones.liberarConexion(iConexion,true);
-
-        } catch (SQLException e) {
+        }
+        catch (SQLException e) {
             throw new PersistenciaException("Error al obtener el total de revisiones",e);
-        } finally {
+        }
+        finally {
             try {
                 /* en cualquier caso, cierro la conexion */
                 if (con != null)
@@ -256,12 +253,12 @@ public class DAORevisionesMySQL implements IDAORevisiones {
 	public void insBack() throws PersistenciaException {
 		// TODO Auto-generated method stub
 		
-	}
+	}   // insBack
 
 
 	@Override
 	public Revision kesimo() throws PersistenciaException {
 		// TODO Auto-generated method stub
 		return null;
-	}
+	}   // kesimo
 }

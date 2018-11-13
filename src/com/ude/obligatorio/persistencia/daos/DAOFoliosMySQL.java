@@ -112,17 +112,13 @@ public class DAOFoliosMySQL implements IDAOFolios{
 
 
     public Folio find(String cod) {
-    	
         IConexion iConexion = iPoolConexiones.obtenerConexion(false);
         Connection con = iConexion.getCon();
-        
         PreparedStatement pstmt;
         ResultSet rs;
-        
         String car = "";
         String query = "";
         int pag = 0;
-        
         Folio fol = null;
 
         try {
@@ -131,12 +127,9 @@ public class DAOFoliosMySQL implements IDAOFolios{
             pstmt.setString(1, cod);
             rs = pstmt.executeQuery();
             // Si hay un folio lo cargo.
-            if (rs.isBeforeFirst()) {
-                while (rs.next()) {
-                    car = rs.getString("caratula");
-                    pag = rs.getInt("paginas");
-
-                }   // while
+            if (rs.next()) {
+                car = rs.getString("caratula");
+                pag = rs.getInt("paginas");
                 fol = new Folio(cod, car, pag);
             }   // if
             rs.close();
@@ -157,8 +150,32 @@ public class DAOFoliosMySQL implements IDAOFolios{
 
 
     public List<VOFolio> listarFolios() {
-    	//TODO IMPLLEMTENAR METODO
-        return null;
+        IConexion iConexion = iPoolConexiones.obtenerConexion(false);
+        Connection con = iConexion.getCon();
+        PreparedStatement pstmt;
+        ResultSet rs;
+        String query, cod, car;
+        int pags;
+        List<VOFolio> folios = new ArrayList<>();
+        
+        try {
+            query = consultas.listarFolios();
+            pstmt = con.prepareStatement(query);
+            rs = pstmt.executeUpdate();
+            
+            // Si hay resultados, cargar la lista.
+            while (rs.next()) {
+                cod = rs.getString("codigo");
+                car = rs.getString("caratula");
+                pags = rs.getString("paginas");
+                folios.add(new VOFolio(cod, car, pags));
+            }   // while
+        }
+        catch (PersistenciaException e) {
+            throw new LogicaException(e.getMessage());
+        }
+        
+        return folios;
     }   // listarFolios
     
     
@@ -171,10 +188,11 @@ public class DAOFoliosMySQL implements IDAOFolios{
         Connection con = iConexion.getCon();
         PreparedStatement pstmt;
         ResultSet rs;
+        String query;
         boolean res = true;
         
         try {
-            String query = consultas.listarFolios();
+            query = consultas.listarFolios();
             pstmt = con.prepareStatement(query);
             rs = pstmt.executeQuery();
             res = !(rs.isBeforeFirst());
@@ -196,15 +214,26 @@ public class DAOFoliosMySQL implements IDAOFolios{
         ResultSet rs;
         VOFolioMaxRev res = null;
         String cod, car, query;
-        int pag, revs;
+        int pags, revs;
         
-        /*try {
-        	//TODO implemetar
-        	//
+        try {
+            query = consultas.obtenerFolioMasRevisado();
+            pstmt = con.prepareStatement(query);
+            rs = pstmt.executeQuery();
+            if (rs.next()) {
+                cod = rs.getString("codigo");
+                car = rs.getString("caratula");
+                pags = rs.getInt("paginas");
+                revs = rs.getInt("cantrevisiones");
+                res = new VOFolioMaxRev(cod, car, pags, revs);
+            }
+            
+            rs.close();
+            pstmt.close();
         }
         catch (SQLException e) {
             throw new PersistenciaException("Error cerrando la conexion.", e);
-        }*/
+        }
         
         return res;
     }   // folioMasRevisado
@@ -212,7 +241,43 @@ public class DAOFoliosMySQL implements IDAOFolios{
 
 	@Override
 	public void delete(String cod) throws PersistenciaException {
-		// TODO Auto-generated method stub
-		
-	}
-}
+        IConexion iConexion = iPoolConexiones.obtenerConexion(true);
+        Connection con = iConexion.getCon();
+        PreparedStatement pstmt;
+        String query;
+
+        if (con == null) {
+            throw new PersistenciaException("No hay conexiones disponibles.");
+        }
+
+        try {
+            // Eliminar las revisiones del folio.
+            query = consultas.borrarFolioRevisiones();
+            pstmt = con.prepareStatement(query);
+            pstmt.setString(1, cod);
+            pstmt.executeQuery();
+            
+            // Eliminar el folio.
+            query = consultas.borrarFolio();
+            pstmt = con.prepareStatement(query);
+            pstmt.setString(1, cod);
+            pstmt.executeQuery();
+            
+            pstmt.close();
+        }
+        catch (SQLException e) {
+            throw new PersistenciaException("Error al intentar obtener un folio.", e);
+        }
+        finally {
+            try {
+                /* en cualquier caso, cierro la conexion */
+                if (con != null)
+                    con.close();
+            }
+            catch (SQLException e) {
+                throw new PersistenciaException("Error cerrar la conexion.", e);
+            }
+        }   // finally
+        return isMember;
+	}   // delete
+}   // DAOFoliosMySQL
