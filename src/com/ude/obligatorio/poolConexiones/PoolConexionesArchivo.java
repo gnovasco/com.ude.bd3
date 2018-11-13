@@ -8,6 +8,8 @@ import com.ude.obligatorio.poolConexiones.interfaces.IPoolConexiones;
 
 public class PoolConexionesArchivo implements IPoolConexiones {
 	
+	private ReentrantReadWriteLock con;
+	
 	public PoolConexionesArchivo() {
         con = new ReentrantReadWriteLock();
 	}   // PoolConexionesArchivo
@@ -17,14 +19,14 @@ public class PoolConexionesArchivo implements IPoolConexiones {
 	* uso, bloquear� al usuario hasta que otro usuario libere alguna.
 	*/
 	public IConexion obtenerConexion(boolean modifica) {
-        Lock bloq;
+        Lock bloq = null;
         
         try {
             if (modifica) {
-                bloq = new con.writeLock();
+                bloq =  con.writeLock();
             }
             else {
-                bloq = new con.readLock();
+                bloq =  con.readLock();
             } // if
             bloq.lock();
         }

@@ -12,8 +12,6 @@ public class ConexionMySQL implements IConexion {
 		con = connection;
 	}
 
-
-	@Override
 	public Connection getCon() {
 		return con;
 	}

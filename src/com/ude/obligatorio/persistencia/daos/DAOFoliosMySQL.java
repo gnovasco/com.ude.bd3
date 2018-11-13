@@ -12,6 +12,7 @@ import com.ude.obligatorio.logica.excepciones.PersistenciaException;
 import com.ude.obligatorio.logica.valueObjects.VOFolio;
 import com.ude.obligatorio.logica.valueObjects.VOFolioMaxRev;
 import com.ude.obligatorio.persistencia.consultas.Consultas;
+import com.ude.obligatorio.poolConexiones.ConexionMySQL;
 import com.ude.obligatorio.poolConexiones.PoolConexiones;
 import com.ude.obligatorio.poolConexiones.interfaces.IConexion;
 import com.ude.obligatorio.poolConexiones.interfaces.IPoolConexiones;
@@ -30,14 +31,15 @@ public class DAOFoliosMySQL implements IDAOFolios{
 
     public DAOFoliosMySQL() {
         consultas = new Consultas();
-        //TODO: traer los datos correspondientes y completarlos
-        iPoolConexiones = PoolConexiones.getPoolConexiones("","","",10,"");
+        
     }   // DAOFoliosMySQL
 
 
-    public boolean member(String cod) throws PersistenciaException {
-        IConexion iConexion = iPoolConexiones.obtenerConexion(false);
-        Connection con = iConexion.getCon();
+    public boolean member(IConexion iConexion, String cod) throws PersistenciaException {
+    	
+    	ConexionMySQL conMySQL = (ConexionMySQL)iConexion;
+        Connection con = conMySQL.getCon();
+        
         PreparedStatement pstmt;
         ResultSet rs;
         String query;
@@ -59,23 +61,15 @@ public class DAOFoliosMySQL implements IDAOFolios{
         catch (SQLException e) {
             throw new PersistenciaException("Error al intentar obtener un folio.", e);
         }
-        finally {
-            try {
-                /* en cualquier caso, cierro la conexion */
-                if (con != null)
-                    con.close();
-            }
-            catch (SQLException e) {
-                throw new PersistenciaException("Error cerrar la conexion.", e);
-            }
-        }   // finally
         return isMember;
     }   // member
 
 
-    public void insert(Folio fol) throws PersistenciaException {
-        IConexion iConexion = iPoolConexiones.obtenerConexion(true);
-        Connection con = iConexion.getCon();
+    public void insert(IConexion iConexion,Folio fol) throws PersistenciaException {
+    	
+    	ConexionMySQL conMySQL = (ConexionMySQL)iConexion;
+        Connection con = conMySQL.getCon();
+        
         PreparedStatement pstmt;
         String folCod, folCar, query;
         int folPag;
@@ -112,9 +106,11 @@ public class DAOFoliosMySQL implements IDAOFolios{
     }   // insert
 
 
-    public Folio find(String cod) {
-        IConexion iConexion = iPoolConexiones.obtenerConexion(false);
-        Connection con = iConexion.getCon();
+    public Folio find(IConexion iConexion,String cod) throws PersistenciaException {
+    	
+    	ConexionMySQL conMySQL = (ConexionMySQL)iConexion;
+        Connection con = conMySQL.getCon();
+        
         PreparedStatement pstmt;
         ResultSet rs;
         String car = "";
@@ -139,20 +135,15 @@ public class DAOFoliosMySQL implements IDAOFolios{
         catch (SQLException e) {
             throw new PersistenciaException("Error cerrando la conexion.", e);
         }
-        finally {
-            return fol;
-        }
+        
+        return fol;
     }   // find
 
-
-    public void delete() {
-        //TODO IMPLLEMTENAR METODO
-    }   // delete
-
-
-    public List<VOFolio> listarFolios() throws PersistenciaException {
-        IConexion iConexion = iPoolConexiones.obtenerConexion(false);
-        Connection con = iConexion.getCon();
+    public List<VOFolio> listarFolios(IConexion iConexion) throws PersistenciaException {
+    	
+    	ConexionMySQL conMySQL = (ConexionMySQL)iConexion;
+        Connection con = conMySQL.getCon();
+        
         PreparedStatement pstmt;
         ResultSet rs;
         String query, cod, car;
@@ -184,9 +175,11 @@ public class DAOFoliosMySQL implements IDAOFolios{
      * Devuelve 'true' si el diccionario está vacío, no hay folios;
      * y 'false' en caso contrario.
      */
-    public boolean esVacio()throws PersistenciaException {
-        IConexion iConexion = iPoolConexiones.obtenerConexion(false);
-        Connection con = iConexion.getCon();
+    public boolean esVacio(IConexion iConexion)throws PersistenciaException {
+    	
+    	ConexionMySQL conMySQL = (ConexionMySQL)iConexion;
+        Connection con = conMySQL.getCon();
+        
         PreparedStatement pstmt;
         ResultSet rs;
         String query;
@@ -208,9 +201,11 @@ public class DAOFoliosMySQL implements IDAOFolios{
     }   // esVacio
     
     
-    public VOFolioMaxRev folioMasRevisado () throws PersistenciaException {
-        IConexion iConexion = iPoolConexiones.obtenerConexion(false);
-        Connection con = iConexion.getCon();
+    public VOFolioMaxRev folioMasRevisado (IConexion iConexion) throws PersistenciaException {
+    	
+    	ConexionMySQL conMySQL = (ConexionMySQL)iConexion;
+        Connection con = conMySQL.getCon();
+        
         PreparedStatement pstmt;
         ResultSet rs;
         VOFolioMaxRev res = null;
@@ -241,9 +236,11 @@ public class DAOFoliosMySQL implements IDAOFolios{
 
 
 	@Override
-	public void delete(String cod) throws PersistenciaException {
-        IConexion iConexion = iPoolConexiones.obtenerConexion(true);
-        Connection con = iConexion.getCon();
+	public void delete(IConexion iConexion,String cod) throws PersistenciaException {
+		
+		ConexionMySQL conMySQL = (ConexionMySQL)iConexion;
+        Connection con = conMySQL.getCon();
+        
         PreparedStatement pstmt;
         String query;
 
@@ -269,15 +266,6 @@ public class DAOFoliosMySQL implements IDAOFolios{
         catch (SQLException e) {
             throw new PersistenciaException("Error al intentar obtener un folio.", e);
         }
-        finally {
-            try {
-                /* en cualquier caso, cierro la conexion */
-                if (con != null)
-                    con.close();
-            }
-            catch (SQLException e) {
-                throw new PersistenciaException("Error cerrar la conexion.", e);
-            }
-        }   // finally
+        
 	}   // delete
 }   // DAOFoliosMySQL

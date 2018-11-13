@@ -11,6 +11,7 @@ import com.ude.obligatorio.logica.Revision;
 import com.ude.obligatorio.logica.excepciones.PersistenciaException;
 import com.ude.obligatorio.logica.valueObjects.VORevision;
 import com.ude.obligatorio.persistencia.consultas.Consultas;
+import com.ude.obligatorio.poolConexiones.ConexionMySQL;
 import com.ude.obligatorio.poolConexiones.PoolConexiones;
 import com.ude.obligatorio.poolConexiones.interfaces.IConexion;
 import com.ude.obligatorio.poolConexiones.interfaces.IPoolConexiones;
@@ -41,9 +42,11 @@ public class DAORevisionesMySQL implements IDAORevisiones {
      * @throws PersistenciaException
      */
     @Override
-    public void insBack(Revision rev) throws PersistenciaException {
-        IConexion iConexion = iPoolConexiones.obtenerConexion(true);
-        Connection con = iConexion.getCon();
+    public void insBack(IConexion iConexion,Revision rev) throws PersistenciaException {
+    	
+    	ConexionMySQL conMySQL = (ConexionMySQL)iConexion;
+        Connection con = conMySQL.getCon();
+        
         PreparedStatement pstmt;
         String query, revDesc;
         int revNum;
@@ -66,16 +69,7 @@ public class DAORevisionesMySQL implements IDAORevisiones {
         catch (SQLException e) {
             throw new PersistenciaException("Error al intentar agregar una revision",e);
         }
-        finally {
-            try {
-                /* en cualquier caso, cierro la conexion */
-                if (con != null)
-                    con.close();
-            }
-            catch (SQLException e) {
-                throw new PersistenciaException("Error al cerrando la conexion revision",e);
-            }
-        }   // finally
+       
     }   // insBack
 
 
@@ -84,10 +78,12 @@ public class DAORevisionesMySQL implements IDAORevisiones {
      * @return Devuelve -1 en caso de error.
      * @throws PersistenciaException
      */
-    public int largo() throws PersistenciaException {
+    public int largo(IConexion iConexion) throws PersistenciaException {
+    	
         int largo = -1;
-        IConexion iConexion = iPoolConexiones.obtenerConexion(true);
-        Connection con = iConexion.getCon();
+        
+        ConexionMySQL conMySQL = (ConexionMySQL)iConexion;
+        Connection con = conMySQL.getCon();
         
         if (con == null) {
             throw new PersistenciaException("No hay conexiones disponibles");
@@ -107,16 +103,6 @@ public class DAORevisionesMySQL implements IDAORevisiones {
         catch (SQLException e) {
             throw new PersistenciaException("Error al obtener el total de revisiones",e);
         }
-        finally {
-            try {
-                /* en cualquier caso, cierro la conexion */
-                if (con != null)
-                    con.close();
-            }
-            catch (SQLException e) {
-                throw new PersistenciaException("Error al cerrando la conexion revision",e);
-            }
-        }
         return largo;
     }   // largo
 
@@ -127,10 +113,13 @@ public class DAORevisionesMySQL implements IDAORevisiones {
      * @return Revision
      */
     @Override
-    public Revision kesimo(int numero) throws PersistenciaException {
+    public Revision kesimo(IConexion iConexion,int numero) throws PersistenciaException {
+    	
         Revision revision = null;
-        IConexion iConexion = iPoolConexiones.obtenerConexion(true);
-        Connection con = iConexion.getCon();
+        
+        ConexionMySQL conMySQL = (ConexionMySQL)iConexion;
+        Connection con = conMySQL.getCon();
+        
         if(con == null) {
             throw new PersistenciaException("No hay conexiones disponibles");
         }
@@ -172,14 +161,16 @@ public class DAORevisionesMySQL implements IDAORevisiones {
      * @return voRevisiones
      * @throws PersistenciaException
      */
-    public List<VORevision> listarRevisiones() throws PersistenciaException {
+    public List<VORevision> listarRevisiones(IConexion iConexion) throws PersistenciaException {
+    	
         List<VORevision> voRevisiones = new ArrayList<>();
-        IConexion iConexion = iPoolConexiones.obtenerConexion(true);
-        Connection con;
+        
+        ConexionMySQL conMySQL = (ConexionMySQL)iConexion;
+        Connection con = conMySQL.getCon();
+        
         String revDesc;
         int revNum;
         
-        con = iConexion.getCon();
         if (con == null) {
             throw new PersistenciaException("No hay conexiones disponibles.");
         }
@@ -200,16 +191,6 @@ public class DAORevisionesMySQL implements IDAORevisiones {
         catch (SQLException e) {
             throw new PersistenciaException("Error al listar las revisiones.", e);
         }
-        finally {
-            try {
-                /* en cualquier caso, cierro la conexion */
-                if (con != null)
-                    con.close();
-            }
-            catch (SQLException e) {
-                throw new PersistenciaException("Error al cerrando la conexion revision",e);
-            }
-        }
         return voRevisiones;
     }   // listarRevisiones
 
@@ -217,18 +198,18 @@ public class DAORevisionesMySQL implements IDAORevisiones {
      * Borra todas las revisiones
      * @throws PersistenciaException
      */
-    public void borrarRevisiones() throws PersistenciaException {
-        IConexion iConexion = iPoolConexiones.obtenerConexion(true);
-        Connection con;
-        String query;
+    public void borrarRevisiones(IConexion iConexion) throws PersistenciaException {
+    	
+    	ConexionMySQL conMySQL = (ConexionMySQL)iConexion;
+        Connection con = conMySQL.getCon();
         
-        con = iConexion.getCon();
+        
         if (con == null) {
             throw new PersistenciaException("No hay conexiones disponibles");
         }
 
         try {
-            query = consultas.borrarFolioRevisiones();
+        	String query = consultas.borrarFolioRevisiones();
             PreparedStatement pstmt = con.prepareStatement(query);
             pstmt.executeUpdate();
             pstmt.close();
@@ -236,29 +217,6 @@ public class DAORevisionesMySQL implements IDAORevisiones {
         catch (SQLException e) {
             throw new PersistenciaException("Error al borrar las revisiones",e);
         }
-        finally {
-            try {
-                /* en cualquier caso, cierro la conexion */
-                if (con != null)
-                    con.close();
-            }
-            catch (SQLException e) {
-                throw new PersistenciaException("Error al cerrando la conexion revision",e);
-            }
-        }
     }   // borrarRevisiones
 
-
-	@Override
-	public void insBack() throws PersistenciaException {
-		// TODO Auto-generated method stub
-		
-	}   // insBack
-
-
-	@Override
-	public Revision kesimo() throws PersistenciaException {
-		// TODO Auto-generated method stub
-		return null;
-	}   // kesimo
 }
