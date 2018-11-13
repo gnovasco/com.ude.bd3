@@ -1,6 +1,12 @@
 package com.ude.obligatorio.poolConexiones;
 
-public PoolConexionesArchivo implements IPoolConexiones {
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
+
+import com.ude.obligatorio.poolConexiones.interfaces.IConexion;
+import com.ude.obligatorio.poolConexiones.interfaces.IPoolConexiones;
+
+public class PoolConexionesArchivo implements IPoolConexiones {
 	
 	public PoolConexionesArchivo() {
         con = new ReentrantReadWriteLock();

@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.ude.obligatorio.logica.Folio;
@@ -149,7 +150,7 @@ public class DAOFoliosMySQL implements IDAOFolios{
     }   // delete
 
 
-    public List<VOFolio> listarFolios() {
+    public List<VOFolio> listarFolios() throws PersistenciaException {
         IConexion iConexion = iPoolConexiones.obtenerConexion(false);
         Connection con = iConexion.getCon();
         PreparedStatement pstmt;
@@ -161,18 +162,18 @@ public class DAOFoliosMySQL implements IDAOFolios{
         try {
             query = consultas.listarFolios();
             pstmt = con.prepareStatement(query);
-            rs = pstmt.executeUpdate();
+            rs = pstmt.executeQuery();
             
             // Si hay resultados, cargar la lista.
             while (rs.next()) {
                 cod = rs.getString("codigo");
                 car = rs.getString("caratula");
-                pags = rs.getString("paginas");
+                pags = rs.getInt("paginas");
                 folios.add(new VOFolio(cod, car, pags));
             }   // while
         }
-        catch (PersistenciaException e) {
-            throw new LogicaException(e.getMessage());
+        catch (SQLException e) {
+            throw new PersistenciaException("Error cerrando la conexion.",e);
         }
         
         return folios;
@@ -207,7 +208,7 @@ public class DAOFoliosMySQL implements IDAOFolios{
     }   // esVacio
     
     
-    public VOFolioMaxRev folioMasRevisado () {
+    public VOFolioMaxRev folioMasRevisado () throws PersistenciaException {
         IConexion iConexion = iPoolConexiones.obtenerConexion(false);
         Connection con = iConexion.getCon();
         PreparedStatement pstmt;
@@ -278,6 +279,5 @@ public class DAOFoliosMySQL implements IDAOFolios{
                 throw new PersistenciaException("Error cerrar la conexion.", e);
             }
         }   // finally
-        return isMember;
 	}   // delete
 }   // DAOFoliosMySQL
