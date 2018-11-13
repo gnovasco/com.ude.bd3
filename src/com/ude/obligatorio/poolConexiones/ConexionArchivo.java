@@ -1,8 +1,12 @@
-package com.ude.obligatorio.poolConexionesArchivo;
+package com.ude.obligatorio.poolConexiones;
 
 import java.sql.Connection;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
-public ConexionArchivo implements IConexion {
+import com.ude.obligatorio.poolConexiones.interfaces.IConexion;
+
+public class ConexionArchivo implements IConexion {
     private ReadWriteLock ioLock;
     
     public ConexionArchivo() {
@@ -12,5 +16,7 @@ public ConexionArchivo implements IConexion {
     
     @Override
 	public Connection getCon() {
+    	//TODO
+    	return null;
 	}   // getCon
 }   // ConexionArchivo

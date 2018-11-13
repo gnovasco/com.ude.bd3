@@ -228,7 +228,7 @@ public class DAORevisionesMySQL implements IDAORevisiones {
         }
 
         try {
-            query = consultas.borrarRevisiones();
+            query = consultas.borrarFolioRevisiones();
             PreparedStatement pstmt = con.prepareStatement(query);
             pstmt.executeUpdate();
             pstmt.close();

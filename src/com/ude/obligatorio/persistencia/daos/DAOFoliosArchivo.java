@@ -19,11 +19,11 @@ import com.ude.obligatorio.poolConexiones.interfaces.IPoolConexiones;
 
 
 
-public class DAOFoliosTexto implements IDAOFolios{
+public class DAOFoliosArchivo implements IDAOFolios{
 	
 	private IPoolConexiones iPoolConexiones;
 
-    public DAOFoliosTexto() {
+    public DAOFoliosArchivo() {
         //iPoolConexiones = PoolConexiones.getPoolConexiones("","","",10,"");
     } 
     

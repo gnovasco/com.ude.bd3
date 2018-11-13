@@ -6,7 +6,7 @@ import com.ude.obligatorio.logica.valueObjects.VORevision;
 
 import java.util.List;
 
-public class DAORevisionesTexto implements IDAORevisiones{
+public class DAORevisionesArchivo implements IDAORevisiones{
 	public void insBack() {
 		//TODO IMPLLEMTENAR METODO
 	}
