@@ -112,17 +112,13 @@ public class DAOFoliosMySQL implements IDAOFolios{
 
 
     public Folio find(String cod) {
-    	
         IConexion iConexion = iPoolConexiones.obtenerConexion(false);
         Connection con = iConexion.getCon();
-        
         PreparedStatement pstmt;
         ResultSet rs;
-        
         String car = "";
         String query = "";
         int pag = 0;
-        
         Folio fol = null;
 
         try {
@@ -131,12 +127,9 @@ public class DAOFoliosMySQL implements IDAOFolios{
             pstmt.setString(1, cod);
             rs = pstmt.executeQuery();
             // Si hay un folio lo cargo.
-            if (rs.isBeforeFirst()) {
-                while (rs.next()) {
-                    car = rs.getString("caratula");
-                    pag = rs.getInt("paginas");
-
-                }   // while
+            if (rs.next()) {
+                car = rs.getString("caratula");
+                pag = rs.getInt("paginas");
                 fol = new Folio(cod, car, pag);
             }   // if
             rs.close();
@@ -157,8 +150,32 @@ public class DAOFoliosMySQL implements IDAOFolios{
 
 
     public List<VOFolio> listarFolios() {
-    	//TODO IMPLLEMTENAR METODO
-        return null;
+        IConexion iConexion = iPoolConexiones.obtenerConexion(false);
+        Connection con = iConexion.getCon();
+        PreparedStatement pstmt;
+        ResultSet rs;
+        String query, cod, car;
+        int pags;
+        List<VOFolio> folios = new ArrayList<>();
+        
+        try {
+            query = consultas.listarFolios();
+            pstmt = con.prepareStatement(query);
+            rs = pstmt.executeUpdate();
+            
+            // Si hay resultados, cargar la lista.
+            while (rs.next()) {
+                cod = rs.getString("codigo");
+                car = rs.getString("caratula");
+                pags = rs.getString("paginas");
+                folios.add(new VOFolio(cod, car, pags));
+            }   // while
+        }
+        catch (PersistenciaException e) {
+            throw new LogicaException(e.getMessage());
+        }
+        
+        return folios;
     }   // listarFolios
     
     
@@ -263,4 +280,4 @@ public class DAOFoliosMySQL implements IDAOFolios{
         }   // finally
         return isMember;
 	}   // delete
-}
+}   // DAOFoliosMySQL

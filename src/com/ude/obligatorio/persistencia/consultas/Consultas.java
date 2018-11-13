@@ -8,7 +8,7 @@ public class Consultas {
     }
     
     public String listarFolios() {
-        return "SELECT * FROM Folios";
+        return "SELECT * FROM Folios ORDER BY codigo";
     }
     
     public String obtenerFolioMasRevisado() {
@@ -24,12 +24,16 @@ public class Consultas {
         return "INSERT INTO Revisiones (numero, descripcion) VALUES (?, ?)";
     }
     
-    public String borrarRevisiones() {
-        return "DELETE FROM Revision";
+    public String borrarFolio() {
+        return "DELETE FROM Folios WHERE codigo = ?";
+    }
+    
+    public String borrarFolioRevisiones() {
+        return "DELETE FROM Revisiones WHERE codigoFolio = ?";
     }
     
     public String listarRevisiones() {
-        return "SELECT * FROM Revisiones WHERE codFolio = ? SORT BY numero";
+        return "SELECT * FROM Revisiones WHERE codFolio = ? ORDER BY numero";
     }
     
     public String cantidadRevisiones() {
