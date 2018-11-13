@@ -1,4 +1,4 @@
-package com.ude.obligatorio.poolConexionesArchivo;
+package com.ude.obligatorio.poolConexiones;
 
 import java.sql.Connection;
 

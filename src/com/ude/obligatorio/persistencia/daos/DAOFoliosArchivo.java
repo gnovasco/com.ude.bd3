@@ -8,9 +8,14 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 import com.ude.obligatorio.logica.Folio;
+import com.ude.obligatorio.logica.excepciones.LogicaException;
 import com.ude.obligatorio.logica.excepciones.PersistenciaException;
 import com.ude.obligatorio.logica.valueObjects.VOFolio;
 import com.ude.obligatorio.logica.valueObjects.VOFolioMaxRev;
@@ -19,29 +24,20 @@ import com.ude.obligatorio.poolConexiones.interfaces.IPoolConexiones;
 
 
 
-public class DAOFoliosTexto implements IDAOFolios{
+public class DAOFoliosArchivo implements IDAOFolios{
 	
 	private IPoolConexiones iPoolConexiones;
 
-    public DAOFoliosTexto() {
+    public DAOFoliosArchivo() {
         //iPoolConexiones = PoolConexiones.getPoolConexiones("","","",10,"");
     } 
     
-	public boolean member(String cod) throws PersistenciaException{
-		
-        IConexion iConexion = iPoolConexiones.obtenerConexion(false);
-        Connection con = iConexion.getCon();
-
-        if (con == null) {
-            throw new PersistenciaException("No hay conexiones disponibles.");
-        }
-		
+	public boolean member(IConexion con, String cod) throws PersistenciaException{				
 		
         boolean isMember = false;
 		
         try {
-  
-            String ruta = "/archivos/folios/" + cod + ".txt"; //importar luego de configuracion
+            String ruta = "/archivos/folios/" + cod + ".txt"; //importar ruta desde ConexionArchivo
             File file = new File(ruta);
 
             if (file.exists()) {
@@ -51,31 +47,13 @@ public class DAOFoliosTexto implements IDAOFolios{
         catch (Exception e) {
         	throw new PersistenciaException("Error de lectura de archivo."); 
 		}
-        finally {
-        	
-            try {
-                if (con != null)
-                    con.close();
-            }
-            catch (Exception e) {
-                throw new PersistenciaException("Error cerrando la conexion.", e);
-            }
-                      
-        } 
+        
         return isMember;
         
 	}
 	
-	public void insert(Folio fol)  throws PersistenciaException{
-		
-        IConexion iConexion = iPoolConexiones.obtenerConexion(true);
-        Connection con = iConexion.getCon();
-
-        if (con == null) {
-            throw new PersistenciaException("No hay conexiones disponibles.");
-        }
-		
-		
+	public void insert(IConexion con, Folio fol)  throws PersistenciaException{
+				
         String folCod, folCar;
         int folPag;
         
@@ -107,30 +85,11 @@ public class DAOFoliosTexto implements IDAOFolios{
         }
         catch (IOException e) {
 			throw new PersistenciaException("Error de lectura del archivo");
-		}
-        finally {
-        	
-            try {
-                if (con != null)
-                    con.close();
-            }
-            catch (Exception e) {
-                throw new PersistenciaException("Error cerrando la conexion.", e);
-            }
-            
-        }   	
+		}  	
 	}
 	
-	public Folio find(String cod) throws PersistenciaException{
-		
-        IConexion iConexion = iPoolConexiones.obtenerConexion(false);
-        Connection con = iConexion.getCon();
-
-        if (con == null) {
-            throw new PersistenciaException("No hay conexiones disponibles.");
-        }        
- 		
-		
+	public Folio find(IConexion con, String cod) throws PersistenciaException{
+			
         String folCod, folCar;
         int folPag;
         Folio fol;
@@ -155,53 +114,57 @@ public class DAOFoliosTexto implements IDAOFolios{
         catch (IOException e) {
 			throw new PersistenciaException("Error de lectura del archivo");
 		}
-        finally {
-        	
-            try {
-                if (con != null)
-                    con.close();
-            }
-            catch (Exception e) {
-                throw new PersistenciaException("Error cerrando la conexion.", e);
-            }
-                      
-        }	
         
         return fol;
 	}
 	
-    public void delete(String cod) throws PersistenciaException{
-    	
-        IConexion iConexion = iPoolConexiones.obtenerConexion(false);
-        Connection con = iConexion.getCon();
-
-        if (con == null) {
-            throw new PersistenciaException("No hay conexiones disponibles.");
-        }  
-        
-    	
+    public void delete(IConexion con, String cod) throws PersistenciaException{
+    	 	
         try {
         	String ruta = "/archivos/folios/" + cod + ".txt"; 
         	File file = new File(ruta);
         	file.delete();
         }
-        finally {
-        	
-            try {
-                if (con != null)
-                    con.close();
-            }
-            catch (Exception e) {
-                throw new PersistenciaException("Error cerrando la conexion.", e);
-            }
-            
-        }
 	}
 
 	@Override
-	public List<VOFolio> listarFolios() {
-		// TODO Auto-generated method stub
-		return null;
+	public List<VOFolio> listarFolios() throws PersistenciaException {
+
+        String folCod, folCar;
+        int folPag;
+        List<VOFolio> folios = new ArrayList<>();		
+        
+        try {
+        	
+            String ruta = "/archivos/folios/";
+            String ext = "txt";
+            File carpeta = new File(ruta);
+            File[] archivos;
+            if(carpeta.exists()) {
+                if(carpeta.isDirectory()) {
+                    archivos = carpeta.listFiles();
+                    for(int i=0; i<archivos.length; i++) {
+                        if(archivos[i].getName().endsWith(ext)) {
+                            
+                            FileReader f = new FileReader(archivos[i].getParentFile());
+                            BufferedReader b = new BufferedReader(f);
+                            
+                            folCod = b.readLine();            
+                            folCar = b.readLine();           
+                            folPag = Integer.parseInt(b.readLine());           
+                            b.close();
+                       
+                            folios.add(new VOFolio(folCod, folCar, folPag));
+                        }
+                    }
+                }
+            } 
+        } 
+        catch (IOException e) {
+			throw new PersistenciaException("Error de permisos");
+		}
+        
+        return folios;       
 	}
 
 	@Override
@@ -212,8 +175,34 @@ public class DAOFoliosTexto implements IDAOFolios{
 
 	@Override
 	public VOFolioMaxRev folioMasRevisado() {
-		// TODO Auto-generated method stub
-		return null;
+
+        String folCod, folCar;
+        int folPag;
+        
+        String ruta = "/archivos/folios/";
+        String ext = "txt";
+        File carpeta = new File(ruta);
+        File[] archivos;
+        if(carpeta.exists()) {
+            if(carpeta.isDirectory()) {
+                archivos = carpeta.listFiles();
+                for(int i=0; i<archivos.length; i++) {
+                    if(archivos[i].getName().endsWith(ext)) {
+                        
+                        FileReader f = new FileReader(archivos[i].getParentFile());
+                        BufferedReader b = new BufferedReader(f);
+                        
+                        folCod = b.readLine();            
+                        folCar = b.readLine();           
+                        folPag = Integer.parseInt(b.readLine());           
+                        b.close();
+                   
+                        folios.add(new VOFolio(folCod, folCar, folPag));
+                    }
+                }
+            }
+        } 		
+		
 	}
 
 }
