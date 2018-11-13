@@ -13,10 +13,5 @@ public class ConexionArchivo implements IConexion {
         ioLock = new ReentrantReadWriteLock();
     }   // ConexionArchivo
     
-    
-    @Override
-	public Connection getCon() {
-    	//TODO
-    	return null;
-	}   // getCon
+
 }   // ConexionArchivo
