@@ -7,18 +7,9 @@ import com.ude.obligatorio.logica.valueObjects.VORevision;
 import java.util.List;
 
 public class DAORevisionesArchivo implements IDAORevisiones{
-	public void insBack() {
-		//TODO IMPLLEMTENAR METODO
-	}
-	
 	public int largo() {
 		//TODO IMPLLEMTENAR METODO
 		return -1;
-	}
-	
-	public Revision kesimo() {
-		//TODO IMPLLEMTENAR METODO
-		return null;
 	}
 	
 	public List<VORevision> listarRevisiones() {

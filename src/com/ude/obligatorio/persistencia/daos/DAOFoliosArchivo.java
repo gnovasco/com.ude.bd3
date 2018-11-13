@@ -119,16 +119,35 @@ public class DAOFoliosArchivo implements IDAOFolios{
 	}
 	
     public void delete(IConexion con, String cod) throws PersistenciaException{
-    	 	
-        try {
-        	String ruta = "/archivos/folios/" + cod + ".txt"; 
-        	File file = new File(ruta);
-        	file.delete();
+    	
+    	File file = null; 	
+    	
+    	//borramos revisiones del Folio
+        String rutaRevisiones = "/archivos/revisiones/";
+        
+        File carpeta = new File(rutaRevisiones);
+        File[] archivos;
+        if(carpeta.exists()) {
+            if(carpeta.isDirectory()) {
+                archivos = carpeta.listFiles();
+                for(int i=0; i<archivos.length; i++) {
+                    if(archivos[i].getName().contains(cod)) {
+                    	file = new File(archivos[i].getPath());
+                    	file.delete();                           
+                    }
+                }
+            }
         }
+        
+        //borramos el Folio
+    	String rutaFolios = "/archivos/folios/" + cod + ".txt"; 
+    	file = new File(rutaFolios);
+    	file.delete();        
+       
 	}
 
 	@Override
-	public List<VOFolio> listarFolios() throws PersistenciaException {
+	public List<VOFolio> listarFolios(IConexion con) throws PersistenciaException {
 
         String folCod, folCar;
         int folPag;
@@ -168,40 +187,26 @@ public class DAOFoliosArchivo implements IDAOFolios{
 	}
 
 	@Override
-	public boolean esVacio() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public VOFolioMaxRev folioMasRevisado() {
-
-        String folCod, folCar;
-        int folPag;
-        
+	public boolean esVacio(IConexion con) {
+		boolean res = true;
+		
         String ruta = "/archivos/folios/";
-        String ext = "txt";
         File carpeta = new File(ruta);
         File[] archivos;
+        
         if(carpeta.exists()) {
             if(carpeta.isDirectory()) {
                 archivos = carpeta.listFiles();
-                for(int i=0; i<archivos.length; i++) {
-                    if(archivos[i].getName().endsWith(ext)) {
-                        
-                        FileReader f = new FileReader(archivos[i].getParentFile());
-                        BufferedReader b = new BufferedReader(f);
-                        
-                        folCod = b.readLine();            
-                        folCar = b.readLine();           
-                        folPag = Integer.parseInt(b.readLine());           
-                        b.close();
-                   
-                        folios.add(new VOFolio(folCod, folCar, folPag));
-                    }
-                }
+                res = (archivos.length != 0);
             }
-        } 		
+        }
+        return res;
+	}
+
+	@Override
+	public VOFolioMaxRev folioMasRevisado(IConexion con) {
+		//TODO
+		return null;
 		
 	}
 
