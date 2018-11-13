@@ -12,7 +12,6 @@ import com.ude.obligatorio.logica.excepciones.PersistenciaException;
 import com.ude.obligatorio.logica.valueObjects.VORevision;
 import com.ude.obligatorio.persistencia.consultas.Consultas;
 import com.ude.obligatorio.poolConexiones.ConexionMySQL;
-import com.ude.obligatorio.poolConexiones.PoolConexiones;
 import com.ude.obligatorio.poolConexiones.interfaces.IConexion;
 import com.ude.obligatorio.poolConexiones.interfaces.IPoolConexiones;
 
@@ -22,7 +21,6 @@ public class DAORevisionesMySQL implements IDAORevisiones {
  * Atributos.
  */
     private Consultas consultas;
-    private IPoolConexiones iPoolConexiones;
     private String codigoFolio;
 
 /*
@@ -31,8 +29,6 @@ public class DAORevisionesMySQL implements IDAORevisiones {
     public DAORevisionesMySQL(String codFol) {
         codigoFolio = codFol;
         consultas = new Consultas();
-        //TODO: traer los datos correspondientes y completarlos.
-        iPoolConexiones = PoolConexiones.getPoolConexiones("","","",10,"");
     }   // DAORevisionesMySQL
 
 
@@ -64,7 +60,6 @@ public class DAORevisionesMySQL implements IDAORevisiones {
             pstmt.setString(2, revDesc);
             pstmt.executeUpdate();
             pstmt.close();
-            iPoolConexiones.liberarConexion(iConexion,true);
         }
         catch (SQLException e) {
             throw new PersistenciaException("Error al intentar agregar una revision",e);
@@ -98,7 +93,6 @@ public class DAORevisionesMySQL implements IDAORevisiones {
                 largo = rs.getInt("total");
             }
             pstmt.close();
-            iPoolConexiones.liberarConexion(iConexion,true);
         }
         catch (SQLException e) {
             throw new PersistenciaException("Error al obtener el total de revisiones",e);

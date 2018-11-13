@@ -13,7 +13,6 @@ import com.ude.obligatorio.logica.valueObjects.VOFolio;
 import com.ude.obligatorio.logica.valueObjects.VOFolioMaxRev;
 import com.ude.obligatorio.persistencia.consultas.Consultas;
 import com.ude.obligatorio.poolConexiones.ConexionMySQL;
-import com.ude.obligatorio.poolConexiones.PoolConexiones;
 import com.ude.obligatorio.poolConexiones.interfaces.IConexion;
 import com.ude.obligatorio.poolConexiones.interfaces.IPoolConexiones;
 
@@ -22,8 +21,6 @@ public class DAOFoliosMySQL implements IDAOFolios{
      * Atributos.
      */
     private Consultas consultas;
-    private IPoolConexiones iPoolConexiones;
-
 
     /*
      * Métodos.
