@@ -1,12 +1,23 @@
 package com.ude.obligatorio.persistencia.factories;
 
+import com.ude.obligatorio.persistencia.daos.IDAOFolios;
+import com.ude.obligatorio.persistencia.daos.IDAORevisiones;
+
 public class FabricaMySQL implements IPersistenciaFabrica
 {
+
+	@Override
 	public IDAOFolios crearFolios() {
-		return new DAOFoliosMySQL;
+		// TODO Auto-generated method stub
+		return null;
 	}
-	
+
+	@Override
 	public IDAORevisiones crearRevisiones() {
-		return new DAORevisionesMySQL;
+		// TODO Auto-generated method stub
+		return null;
 	}
+
+	
+	
 }
