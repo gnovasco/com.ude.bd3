@@ -7,29 +7,20 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 
 import com.ude.obligatorio.logica.Folio;
-import com.ude.obligatorio.logica.excepciones.LogicaException;
 import com.ude.obligatorio.logica.excepciones.PersistenciaException;
 import com.ude.obligatorio.logica.valueObjects.VOFolio;
 import com.ude.obligatorio.logica.valueObjects.VOFolioMaxRev;
 import com.ude.obligatorio.poolConexiones.interfaces.IConexion;
-import com.ude.obligatorio.poolConexiones.interfaces.IPoolConexiones;
 
 
 
 public class DAOFoliosArchivo implements IDAOFolios{
 	
-	private IPoolConexiones iPoolConexiones;
-
     public DAOFoliosArchivo() {
-        //iPoolConexiones = PoolConexiones.getPoolConexiones("","","",10,"");
     } 
     
 	public boolean member(IConexion con, String cod) throws PersistenciaException{				
@@ -122,27 +113,32 @@ public class DAOFoliosArchivo implements IDAOFolios{
     	
     	File file = null; 	
     	
-    	//borramos revisiones del Folio
-        String rutaRevisiones = "/archivos/revisiones/";
-        
-        File carpeta = new File(rutaRevisiones);
-        File[] archivos;
-        if(carpeta.exists()) {
-            if(carpeta.isDirectory()) {
-                archivos = carpeta.listFiles();
-                for(int i=0; i<archivos.length; i++) {
-                    if(archivos[i].getName().contains(cod)) {
-                    	file = new File(archivos[i].getPath());
-                    	file.delete();                           
-                    }
-                }
-            }
-        }
-        
-        //borramos el Folio
-    	String rutaFolios = "/archivos/folios/" + cod + ".txt"; 
-    	file = new File(rutaFolios);
-    	file.delete();        
+    	try {
+	    	//borramos revisiones del Folio
+	        String rutaRevisiones = "/archivos/revisiones/";
+	        
+	        File carpeta = new File(rutaRevisiones);
+	        File[] archivos;
+	        if(carpeta.exists()) {
+	            if(carpeta.isDirectory()) {
+	                archivos = carpeta.listFiles();
+	                for(int i=0; i<archivos.length; i++) {
+	                    if(archivos[i].getName().contains(cod)) {
+	                    	file = new File(archivos[i].getPath());
+	                    	file.delete();                           
+	                    }
+	                }
+	            }
+	        }
+	        
+	        //borramos el Folio
+	    	String rutaFolios = "/archivos/folios/" + cod + ".txt"; 
+	    	file = new File(rutaFolios);
+	    	file.delete();
+    	} 
+        catch (Exception e) {
+			throw new PersistenciaException("Error de archivo", e);
+		} 
        
 	}
 
@@ -204,10 +200,67 @@ public class DAOFoliosArchivo implements IDAOFolios{
 	}
 
 	@Override
-	public VOFolioMaxRev folioMasRevisado(IConexion con) {
-		//TODO
-		return null;
-		
+	public VOFolioMaxRev folioMasRevisado(IConexion con) throws PersistenciaException {
+
+
+        VOFolioMaxRev foliosMaxRev = null;	
+        String folCod, folCar;
+        int folPag;
+        
+        int maxRev = 0;
+        int cantRev = 0;
+        
+        try {
+
+        	String rutaFolios = "/archivos/folios/";
+        	String rutaRevisiones = "/archivos/revisiones/";
+        	
+            File carpetaFolios = new File(rutaFolios);
+            File[] folios;
+ 
+            File carpetaRevisiones = new File(rutaRevisiones);
+            File[] revisiones;  
+                                  
+            if(carpetaFolios.isDirectory()) {
+                if(carpetaRevisiones.isDirectory()) {
+                    folios = carpetaFolios.listFiles();
+                    //recorremos todos los folios
+                    for(int i=0; i<folios.length; i++) {
+
+            			revisiones = carpetaRevisiones.listFiles();
+            			//para cada folio, contamos sus revisiones
+    	                for(int j=0; i<revisiones.length; j++) {
+    	                    if(revisiones[i].getName().contains(folios[i].getName())) {
+    	                    	cantRev++;
+    	                    }
+    	                }
+    	                
+    	                //si tiene más revisiones que el actual, actualizamos.
+                    	if (cantRev > maxRev) {      	                
+                            FileReader f = new FileReader(folios[i].getParentFile());
+                            BufferedReader b = new BufferedReader(f);
+                            
+                            folCod = b.readLine();            
+                            folCar = b.readLine();           
+                            folPag = Integer.parseInt(b.readLine());           
+                            b.close();
+                       
+                            foliosMaxRev = new VOFolioMaxRev(folCod, folCar, folPag, cantRev);
+                    	}
+                    	
+                    	//reiniciamos contador.
+                    	cantRev = 0;
+                    	
+                    }
+                    
+                }
+            } 
+        } 
+        catch (Exception e) {
+			throw new PersistenciaException("Error",e);
+		}
+        
+        return foliosMaxRev;	
 	}
 
 }
