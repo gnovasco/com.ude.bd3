@@ -177,7 +177,7 @@ public class DAORevisionesMySQL implements IDAORevisiones {
             while (rs.next()) {
                 revNum = rs.getInt("numero");
                 revDesc = rs.getString("descripcion");
-                VORevision voRevision = new VORevision(revNum, revDesc);
+                VORevision voRevision = new VORevision(revNum, revDesc,codigoFolio);
                 voRevisiones.add(voRevision);
             }
             pstmt.close();

@@ -4,12 +4,12 @@ public class VORevision {
 
     private int numero;
     private String description;
-    //private String codFolio;
+    private String codFolio;
 
-     public VORevision(int num, String desc){
+     public VORevision(int num, String desc,String codF){
          numero = num;
          description = desc;
-         //codFolio = codF;
+         codFolio = codF;
      }
 
     public int getNumero() {
@@ -20,7 +20,7 @@ public class VORevision {
         return description;
     }
 
-    /*public String getCodFolio() {
+    public String getCodFolio() {
         return codFolio;
-    }*/
+    }
 }
