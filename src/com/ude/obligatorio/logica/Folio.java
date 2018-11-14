@@ -3,6 +3,7 @@ package com.ude.obligatorio.logica;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.ude.obligatorio.logica.excepciones.FolioException;
 import com.ude.obligatorio.logica.excepciones.LogicaException;
 import com.ude.obligatorio.logica.excepciones.PersistenciaException;
 import com.ude.obligatorio.logica.valueObjects.VORevision;
@@ -18,7 +19,7 @@ public class Folio {
     private int paginas;
     private IDAORevisiones secuencia;
 
-    public Folio(String cod,String car,int pag){
+    public Folio(String cod,String car,int pag) throws FolioException{
         codigo = cod;
         caratula = car;
         paginas = pag;
@@ -28,8 +29,7 @@ public class Folio {
 		try {
 			fabRev = (IPersistenciaFabrica) Class.forName("").newInstance();
 		} catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new FolioException("Error al crear el folio");
 		}
 		secuencia = fabRev.crearRevisiones(cod);
     }

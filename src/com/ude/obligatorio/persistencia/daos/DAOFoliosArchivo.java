@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.ude.obligatorio.logica.Folio;
+import com.ude.obligatorio.logica.excepciones.FolioException;
 import com.ude.obligatorio.logica.excepciones.PersistenciaException;
 import com.ude.obligatorio.logica.valueObjects.VOFolio;
 import com.ude.obligatorio.logica.valueObjects.VOFolioMaxRev;
@@ -79,7 +80,7 @@ public class DAOFoliosArchivo implements IDAOFolios{
 		}  	
 	}
 	
-	public Folio find(IConexion con, String cod) throws PersistenciaException{
+	public Folio find(IConexion con, String cod) throws PersistenciaException, FolioException{
 			
         String folCod, folCar;
         int folPag;

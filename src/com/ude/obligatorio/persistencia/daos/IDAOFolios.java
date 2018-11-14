@@ -4,6 +4,7 @@ package com.ude.obligatorio.persistencia.daos;
 import java.util.List;
 
 import com.ude.obligatorio.logica.Folio;
+import com.ude.obligatorio.logica.excepciones.FolioException;
 import com.ude.obligatorio.logica.excepciones.PersistenciaException;
 import com.ude.obligatorio.logica.valueObjects.VOFolio;
 import com.ude.obligatorio.logica.valueObjects.VOFolioMaxRev;
@@ -16,7 +17,7 @@ public interface IDAOFolios {
 	
 	public boolean member(IConexion iConexion,String cod) throws PersistenciaException;
 	public void insert(IConexion iConexion,Folio fol)  throws PersistenciaException;
-	public Folio find(IConexion iConexion,String cod) throws PersistenciaException;
+	public Folio find(IConexion iConexion,String cod) throws PersistenciaException,FolioException ;
     public void delete(IConexion iConexion,String cod) throws PersistenciaException;
     public List<VOFolio> listarFolios(IConexion iConexion) throws PersistenciaException;
     public boolean esVacio(IConexion iConexion) throws PersistenciaException;

@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.ude.obligatorio.logica.Folio;
+import com.ude.obligatorio.logica.excepciones.FolioException;
 import com.ude.obligatorio.logica.excepciones.PersistenciaException;
 import com.ude.obligatorio.logica.valueObjects.VOFolio;
 import com.ude.obligatorio.logica.valueObjects.VOFolioMaxRev;
@@ -103,7 +104,7 @@ public class DAOFoliosMySQL implements IDAOFolios{
     }   // insert
 
 
-    public Folio find(IConexion iConexion,String cod) throws PersistenciaException {
+    public Folio find(IConexion iConexion,String cod) throws PersistenciaException, FolioException {
     	
     	ConexionMySQL conMySQL = (ConexionMySQL)iConexion;
         Connection con = conMySQL.getCon();
@@ -131,7 +132,7 @@ public class DAOFoliosMySQL implements IDAOFolios{
         }
         catch (SQLException e) {
             throw new PersistenciaException("Error cerrando la conexion.", e);
-        }
+        } 
         
         return fol;
     }   // find

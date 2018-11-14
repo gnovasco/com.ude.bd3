@@ -12,13 +12,12 @@ import com.ude.obligatorio.logica.valueObjects.VORevision;
 import com.ude.obligatorio.persistencia.daos.IDAOFolios;
 import com.ude.obligatorio.persistencia.daos.IDAORevisiones;
 import com.ude.obligatorio.persistencia.factories.IPersistenciaFabrica;
-import com.ude.obligatorio.poolConexiones.PoolConexiones;
+import com.ude.obligatorio.poolConexiones.PoolConexionesMySQL;
 import com.ude.obligatorio.poolConexiones.interfaces.IConexion;
 import com.ude.obligatorio.poolConexiones.interfaces.IPoolConexiones;
 
 public class Fachada {
 	private IDAOFolios diccioFol;
-	private IDAORevisiones diccioRev;
 	private IPoolConexiones iPoolConexiones;
 	
 	public Fachada () throws LogicaException {
@@ -30,11 +29,8 @@ public class Fachada {
 			IPersistenciaFabrica fabFol = (IPersistenciaFabrica) Class.forName(nomFab).newInstance();
 			diccioFol = fabFol.crearFolios();
 			
-			IPersistenciaFabrica fabRev = (IPersistenciaFabrica) Class.forName(nomFab).newInstance();
-			diccioRev = fabRev.crearRevisiones();
-			
 			//TODO: traer los datos correspondientes y completarlos
-	        iPoolConexiones = PoolConexiones.getPoolConexiones("","","",10,"");
+	        iPoolConexiones = PoolConexionesMySQL.getPoolConexiones("","","",10,"");
 	        
 		} catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
 			throw new LogicaException("Hubo un error interno, intente mas tarde");
@@ -71,10 +67,12 @@ public class Fachada {
 			
 			Folio folio = diccioFol.find(iConexion,codF);
 			
+			IDAORevisiones diccioRev = folio.getSecuencia();
+			
 			int numR = diccioRev.largo(iConexion);
 			Revision rev = new Revision(numR, desc);
 			
-			folio.addRevision(rev);
+			folio.addRevision(iConexion,rev);
 			
 			diccioFol.insert(iConexion,folio);
 			iPoolConexiones.liberarConexion(iConexion, true);
@@ -98,12 +96,16 @@ public class Fachada {
 		
 	}
 	
-	public String darDescripcion(String codF, int numR) throws PersistenciaException, RevisionesException {
+	public String darDescripcion(String codF, int numR) throws PersistenciaException, RevisionesException, FolioException {
 		
 		String desc = "";
 		
 		IConexion iConexion = iPoolConexiones.obtenerConexion(true);
+		
+		Folio folio = diccioFol.find(iConexion,codF);
+		IDAORevisiones diccioRev = folio.getSecuencia();
 		Revision rev = diccioRev.kesimo(iConexion,numR);
+		
 		if(rev != null) {
 			desc = rev.getDescripcion();
 			iPoolConexiones.liberarConexion(iConexion, true);
@@ -120,9 +122,11 @@ public class Fachada {
 		iPoolConexiones.liberarConexion(iConexion, true);
 		return folios;
 	}
-	public List<VORevision> listarRevisiones() throws PersistenciaException{
+	public List<VORevision> listarRevisiones(String codF) throws PersistenciaException, LogicaException, FolioException{
 		IConexion iConexion = iPoolConexiones.obtenerConexion(true);
-		List<VORevision> revisiones = diccioRev.listarRevisiones(iConexion);
+		
+		Folio folio = diccioFol.find(iConexion,codF);
+		List<VORevision> revisiones = folio.listarRevisiones(iConexion);
 		iPoolConexiones.liberarConexion(iConexion, true);
 		return revisiones;
 	}
