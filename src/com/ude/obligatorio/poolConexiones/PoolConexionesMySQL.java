@@ -39,7 +39,7 @@ public class PoolConexionesMySQL implements IPoolConexiones {
 		this.creadas = 0;
 		this.nivelTransaccionalidad = Connection.TRANSACTION_NONE;
 
-		conexiones = new Conexion[tamanio];
+		conexiones = new ConexionMySQL[tamanio];
 	}	// PoolConexiones
 	
 	/*
@@ -55,6 +55,8 @@ public class PoolConexionesMySQL implements IPoolConexiones {
 	@Override
 	public IConexion obtenerConexion(boolean modifica) {
 
+
+		
 		IConexion conexion = null;
 		if ((tope + 1) < tamanio) {
 			try {
@@ -63,7 +65,7 @@ public class PoolConexionesMySQL implements IPoolConexiones {
 
 				Class.forName("com.mysql.jdbc.Driver");
 				Connection connection = DriverManager.getConnection(url, user, password);
-				conexion = new Conexion(connection);
+				conexion = new ConexionMySQL(connection);
 				conexiones[++tope] = conexion;
 			}
 			catch (SQLException | ClassNotFoundException ex) {
@@ -84,7 +86,10 @@ public class PoolConexionesMySQL implements IPoolConexiones {
 			
 			while (conexiones[i] != icon)
 				i++;
-			Connection con = conexiones[i].getCon();
+			
+			ConexionMySQL conMySQL = (ConexionMySQL)conexiones[i];
+	        Connection con = conMySQL.getCon();
+	        
 			con.close();
 			// Aca bajar las conexiones desde la siguiente hasta el tope
 			// para que no quede un hueco.
