@@ -69,7 +69,7 @@ public class DAORevisionesArchivo implements IDAORevisiones{
 		                
 		                b.close();
 		           
-		                revisiones.add(new VORevision(revNum, revDesc));
+		                revisiones.add(new VORevision(revNum, revDesc,codigoFolio));
 		        	}
 	                
 		        }
