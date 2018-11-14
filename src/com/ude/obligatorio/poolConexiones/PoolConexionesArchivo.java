@@ -13,66 +13,91 @@ public class PoolConexionesArchivo implements IPoolConexiones {
 	
 	// Bloqueo para mutua exclusion de la estructura.
 	private Lock mapaLock = new ReentrantLock();
-
-	// Array asociativo de nro. de folio a candado.
-	private Map<String, ReadWriteLock> lockMap = new HashMap<String, ReadWriteLock>();
-
-
-	/*
-	 * Metodos.
-	 */
 	
-	/*
-	 * Bloquea la estructura para pedir el candado sobre el folio.
-	 */
+	
 	public IConexion obtenerConexion(boolean modifica) {
 		mapaLock.lock();
-		return null;
 	}	// obtenerConexion
 	
-
-	/*
-	 * Libera la estructura para liberar luego el candado sobre el folio.
-	 */
+	
 	public void liberarConexion(IConexion icon, boolean ok) {
-        mapaLock.unlock();
-	}   // liberarConexion
+		mapaLock.unlock();
+	}	// liberarConexion
+	
 
 
 /*	
-	private ReentrantReadWriteLock con;
-	
-	public PoolConexionesArchivo() {
-        con = new ReentrantReadWriteLock();
-	}   // PoolConexionesArchivo
-	
-	/*
-	* Solicita una conexi�n al pool. En caso de que todas est�n actualmente en
-	* uso, bloquear� al usuario hasta que otro usuario libere alguna.
-	*
-	public IConexion obtenerConexion(boolean modifica) {
-        Lock bloq = null;
-        
-        try {
-            if (modifica) {
-                bloq =  con.writeLock();
-            }
-            else {
-                bloq =  con.readLock();
-            } // if
-            bloq.lock();
+	private Map<String, ReadWriteLock> lockMap = new HashMap<String, ReadWriteLock>();
+
+// lock to protect our registry - helps to prevent multiple threads
+// from instantiating a lock with the same key
+private Lock registryLock = new ReentrantLock();
+
+// allow callers to specify the lock type they require
+public enum LockType {
+    READ, WRITE
+}
+
+public void acquire(String fileName, LockType type) {
+
+    // lazily instantiates locks on first use
+    ReadWriteLock lock = retrieveLock(fileName);
+
+    switch (type) {
+    case READ:
+        lock.readLock().lock();
+        break;
+    case WRITE:
+        lock.writeLock().lock();
+        break;
+    default:
+        // handle error scenario
+        break;
+    }
+
+}
+
+public void release(String fileName, LockType type) {
+
+    ReadWriteLock lock = retrieveLock(fileName);
+
+    switch (type) {
+
+    case READ:
+        lock.readLock().unlock();
+        break;
+    case WRITE:
+        lock.writeLock().unlock();
+        break;
+    default:
+        // handle error scenario
+        break;
+    }
+
+}
+
+private ReadWriteLock retrieveLock(String fileName) {
+
+    ReadWriteLock newLock = null;
+
+    try {
+
+        registryLock.lock();
+
+        newLock = lockMap.get(fileName);
+
+        // create lock and add to map if it doesn't exist
+        if (newLock == null) {
+            newLock = new ReentrantReadWriteLock();
+            lockMap.put(fileName, newLock);
         }
-        
-        return bloq;
-	}   // obtenerConexion
-	
-	/*
-	 * Devuelve una conexi�n al pool y avisa a posibles usuarios bloqueados.
-	 *  Siok vale true, har� commit al devolverla, sino har� rollback. 
-	 *
-	public void liberarConexion(IConexion icon, boolean ok) {
-        icon.unlock();
-	}   // liberarConexion
+    } finally {
+
+        registryLock.unlock();
+    }
+
+    return newLock;
+}
 */
 	
 }   // PoolConexionesArchivo
