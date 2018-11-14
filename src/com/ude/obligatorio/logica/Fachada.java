@@ -1,5 +1,7 @@
 package com.ude.obligatorio.logica;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.List;
 
 import com.ude.obligatorio.logica.excepciones.FolioException;
@@ -16,23 +18,36 @@ import com.ude.obligatorio.poolConexiones.PoolConexionesMySQL;
 import com.ude.obligatorio.poolConexiones.interfaces.IConexion;
 import com.ude.obligatorio.poolConexiones.interfaces.IPoolConexiones;
 
+import com.ude.obligatorio.configuracion.Configuracion;
+
 public class Fachada {
 	private IDAOFolios diccioFol;
 	private IPoolConexiones iPoolConexiones;
 	
 	public Fachada () throws LogicaException {
 		try {
-			
-			//TODO llamar archivo de configurtacion
-			String nomFab = "FabricaMySQL";
+
+			String driver = Configuracion.getProperty("driver");   
+			String url = Configuracion.getProperty("url");
+            String user = Configuracion.getProperty("user");
+            String password = Configuracion.getProperty("pass");
+            String nomFab = Configuracion.getProperty("nomFab");
+ 
+            Class.forName(driver);						
 			
 			IPersistenciaFabrica fabFol = (IPersistenciaFabrica) Class.forName(nomFab).newInstance();
 			diccioFol = fabFol.crearFolios();
 			
-			//TODO: traer los datos correspondientes y completarlos
-	        iPoolConexiones = PoolConexionesMySQL.getPoolConexiones("","","",10,"");
+	        iPoolConexiones = PoolConexionesMySQL.getPoolConexiones(url,user,password,10,driver);
 	        
-		} catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
+		} 
+		catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
+			throw new LogicaException("Hubo un error interno, intente mas tarde");
+		} 
+		catch (FileNotFoundException e) {
+			throw new LogicaException("Hubo un error interno, intente mas tarde");
+		} 
+		catch (IOException e) {
 			throw new LogicaException("Hubo un error interno, intente mas tarde");
 		}
 		
