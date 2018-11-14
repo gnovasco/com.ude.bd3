@@ -27,18 +27,18 @@ public class DAOFoliosArchivo implements IDAOFolios{
 		
         boolean isMember = false;
 		
-      //  try {
+        try {
             String ruta = "/archivos/folios/" + cod + ".txt"; //importar ruta desde ConexionArchivo
             File file = new File(ruta);
 
             if (file.exists()) {
             	isMember = true;
             }
-        /*} 
+        } 
         catch (Exception e) {
         	throw new PersistenciaException("Error de lectura de archivo."); 
 		}
-        */
+        
         return isMember;
         
 	}
