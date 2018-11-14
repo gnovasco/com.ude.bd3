@@ -12,92 +12,50 @@ public class PoolConexionesArchivo implements IPoolConexiones {
 	 */
 	
 	// Bloqueo para mutua exclusion de la estructura.
-	private Lock mapaLock = new ReentrantLock();
+	private IConexion [] conexiones;
+	private int tamanio, tope;
+	
+	
+	public PoolConexionesArchivo(int tam) {
+		conexiones = new IConexion [tam];
+		tope = -1;
+		tamanio = tam;
+	}
 	
 	
 	public IConexion obtenerConexion(boolean modifica) {
-		mapaLock.lock();
+		if ((tope + 1) < tamanio) {
+			conexiones[++tope] = new ConexionArchivo();
+			if (modifica) {
+				((ConexionArchivo)conexiones[tope]).getCandado().writeLock().lock();
+			}
+			else {
+				((ConexionArchivo)conexiones[tope]).getCandado().readLock().lock();
+			}	// if
+		}
+		
+		return conexiones[tope];
 	}	// obtenerConexion
 	
 	
-	public void liberarConexion(IConexion icon, boolean ok) {
-		mapaLock.unlock();
+	public void liberarConexion(IConexion icon, boolean modifica) {
+		int i = 0, j;
+		
+		// Buscar la conexion.
+		while (conexiones[i] != icon)
+			i++;
+		
+		if (modifica) {
+			((ConexionArchivo)conexiones[i]).getCandado().writeLock().unlock();
+		}
+		else {
+			((ConexionArchivo)conexiones[i]).getCandado().readLock().unlock();
+		}	// if
+		
+		// Bajar las demas para que no haya huecos.
+		for (j = i+1; j < tope; j++)
+			conexiones[j] = conexiones[j + 1]; 
+		tope -= 1;
 	}	// liberarConexion
-	
-
-
-/*	
-	private Map<String, ReadWriteLock> lockMap = new HashMap<String, ReadWriteLock>();
-
-// lock to protect our registry - helps to prevent multiple threads
-// from instantiating a lock with the same key
-private Lock registryLock = new ReentrantLock();
-
-// allow callers to specify the lock type they require
-public enum LockType {
-    READ, WRITE
-}
-
-public void acquire(String fileName, LockType type) {
-
-    // lazily instantiates locks on first use
-    ReadWriteLock lock = retrieveLock(fileName);
-
-    switch (type) {
-    case READ:
-        lock.readLock().lock();
-        break;
-    case WRITE:
-        lock.writeLock().lock();
-        break;
-    default:
-        // handle error scenario
-        break;
-    }
-
-}
-
-public void release(String fileName, LockType type) {
-
-    ReadWriteLock lock = retrieveLock(fileName);
-
-    switch (type) {
-
-    case READ:
-        lock.readLock().unlock();
-        break;
-    case WRITE:
-        lock.writeLock().unlock();
-        break;
-    default:
-        // handle error scenario
-        break;
-    }
-
-}
-
-private ReadWriteLock retrieveLock(String fileName) {
-
-    ReadWriteLock newLock = null;
-
-    try {
-
-        registryLock.lock();
-
-        newLock = lockMap.get(fileName);
-
-        // create lock and add to map if it doesn't exist
-        if (newLock == null) {
-            newLock = new ReentrantReadWriteLock();
-            lockMap.put(fileName, newLock);
-        }
-    } finally {
-
-        registryLock.unlock();
-    }
-
-    return newLock;
-}
-*/
 	
 }   // PoolConexionesArchivo
