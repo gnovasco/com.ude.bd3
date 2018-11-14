@@ -229,8 +229,8 @@ public class DAOFoliosArchivo implements IDAOFolios{
 
             			revisiones = carpetaRevisiones.listFiles();
             			//para cada folio, contamos sus revisiones
-    	                for(int j=0; i<revisiones.length; j++) {
-    	                    if(revisiones[i].getName().contains(folios[i].getName())) {
+    	                for(int j=0; j<revisiones.length; j++) {
+    	                    if(revisiones[j].getName().contains(folios[i].getName())) {
     	                    	cantRev++;
     	                    }
     	                }
