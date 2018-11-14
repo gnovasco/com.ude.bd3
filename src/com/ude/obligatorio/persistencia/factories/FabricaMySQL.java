@@ -13,11 +13,10 @@ public class FabricaMySQL implements IPersistenciaFabrica
 	public IDAOFolios crearFolios() {
 		return new DAOFoliosMySQL();
 	}
-
+	
 	@Override
-	public IDAORevisiones crearRevisiones() {
-		//TODO agregar el string que falta
-		return new DAORevisionesMySQL("");
+	public IDAORevisiones crearRevisiones(String codigo) {
+		return new DAORevisionesMySQL(codigo);
 	}
 
 	

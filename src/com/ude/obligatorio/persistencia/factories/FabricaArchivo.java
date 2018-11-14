@@ -1,9 +1,10 @@
 package com.ude.obligatorio.persistencia.factories;
 
+import com.ude.obligatorio.persistencia.daos.DAORevisionesArchivo;
 import com.ude.obligatorio.persistencia.daos.IDAOFolios;
 import com.ude.obligatorio.persistencia.daos.IDAORevisiones;
 
-public class TextoFabrica implements IPersistenciaFabrica
+public class FabricaArchivo implements IPersistenciaFabrica
 {
 
 	@Override
@@ -13,17 +14,9 @@ public class TextoFabrica implements IPersistenciaFabrica
 	}
 
 	@Override
-	public IDAORevisiones crearRevisiones() {
+	public IDAORevisiones crearRevisiones(String codigo) {
 		// TODO Auto-generated method stub
-		return null;
+		return new DAORevisionesArchivo(codigo);
 	}
-	/*
-	 * Guardar en un archivo de texto simple.
-	 */
-	//boolean guardar();
 	
-	/*
-	 * Leer de un archivo de texto simple.
-	 */
-	//int leer();
 }

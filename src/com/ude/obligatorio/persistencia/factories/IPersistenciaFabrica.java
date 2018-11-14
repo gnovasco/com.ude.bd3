@@ -9,5 +9,5 @@ public interface IPersistenciaFabrica
 	 * Crear los DAO para la persistencia.
 	 */
 	public IDAOFolios crearFolios();
-	public IDAORevisiones crearRevisiones();
+	public IDAORevisiones crearRevisiones(String codigo);
 }

@@ -8,6 +8,8 @@ import com.ude.obligatorio.logica.excepciones.PersistenciaException;
 import com.ude.obligatorio.logica.valueObjects.VORevision;
 import com.ude.obligatorio.persistencia.daos.DAORevisionesMySQL;
 import com.ude.obligatorio.persistencia.daos.IDAORevisiones;
+import com.ude.obligatorio.persistencia.factories.IPersistenciaFabrica;
+import com.ude.obligatorio.poolConexiones.interfaces.IConexion;
 
 public class Folio {
 
@@ -20,8 +22,16 @@ public class Folio {
         codigo = cod;
         caratula = car;
         paginas = pag;
-
-        secuencia = new DAORevisionesMySQL(codigo);
+        
+        //TODO
+		IPersistenciaFabrica fabRev = null;
+		try {
+			fabRev = (IPersistenciaFabrica) Class.forName("").newInstance();
+		} catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		secuencia = fabRev.crearRevisiones(cod);
     }
 
     public String getCodigo() {
@@ -36,53 +46,58 @@ public class Folio {
         return paginas;
     }
 
-    public boolean tieneRevision(int numR) throws LogicaException {
+    public IDAORevisiones getSecuencia() {
+        return secuencia;
+    }    
+    
+    public boolean tieneRevision(IConexion con, int numR) throws LogicaException {
         Revision revision = null;
         try {
-            revision = secuencia.kesimo(numR);
+            revision = secuencia.kesimo(con, numR);
         } catch(PersistenciaException e) {
             throw new LogicaException(e.getMessage());
         }
         return revision != null;
     }
-    public int cantidadRevisiones() throws LogicaException {
+    
+    public int cantidadRevisiones(IConexion con) throws LogicaException {
         int largo = -1;
         try {
-            largo = secuencia.largo();
+            largo = secuencia.largo(con);
         } catch(PersistenciaException e) {
             throw new LogicaException(e.getMessage());
         }
         return largo;
     }
-    public void addRevision(Revision rev) throws LogicaException {
+    public void addRevision(IConexion con, Revision rev) throws LogicaException {
 
         try {
-            secuencia.insBack(rev);
+            secuencia.insBack(con, rev);
         } catch (PersistenciaException e) {
             throw new LogicaException(e.getMessage());
         }
     }
-    public Revision obtenerRevision(int numR) throws LogicaException {
+    public Revision obtenerRevision(IConexion con, int numR) throws LogicaException {
         Revision kesimo = null;
         try {
-            kesimo = secuencia.kesimo(numR);
+            kesimo = secuencia.kesimo(con, numR);
         } catch (PersistenciaException e) {
             throw new LogicaException(e.getMessage());
         }
         return kesimo;
     }
-    public List<VORevision> listarRevisiones() throws LogicaException {
+    public List<VORevision> listarRevisiones(IConexion con) throws LogicaException {
         List<VORevision> revisiones = new ArrayList<>();
         try {
-            revisiones = secuencia.listarRevisiones();
+            revisiones = secuencia.listarRevisiones(con);
         } catch (PersistenciaException e) {
             throw new LogicaException(e.getMessage());
         }
         return revisiones;
     }
-    public void borrarRevisiones() throws LogicaException {
+    public void borrarRevisiones(IConexion con) throws LogicaException {
         try {
-            secuencia.borrarRevisiones();
+            secuencia.borrarRevisiones(con);
         } catch (PersistenciaException e) {
             throw new LogicaException(e.getMessage());
         }
