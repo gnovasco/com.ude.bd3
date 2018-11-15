@@ -7,7 +7,7 @@ import java.util.List;
 import com.ude.obligatorio.logica.excepciones.FolioException;
 import com.ude.obligatorio.logica.excepciones.LogicaException;
 import com.ude.obligatorio.logica.excepciones.PersistenciaException;
-import com.ude.obligatorio.logica.excepciones.RevisionesException;
+import com.ude.obligatorio.logica.excepciones.RevisionException;
 import com.ude.obligatorio.logica.valueObjects.VOFolio;
 import com.ude.obligatorio.logica.valueObjects.VOFolioMaxRev;
 import com.ude.obligatorio.logica.valueObjects.VORevision;
@@ -67,7 +67,8 @@ public class Fachada {
 			diccioFol.insert(iConexion,folio);
 			
 			iPoolConexiones.liberarConexion(iConexion, true);
-		} else {
+		} 
+		else {
 			iPoolConexiones.liberarConexion(iConexion, true);
 			throw new FolioException("Ya existe un folio con ese codigo");
 		}
@@ -111,7 +112,7 @@ public class Fachada {
 		
 	}
 	
-	public String darDescripcion(String codF, int numR) throws PersistenciaException, RevisionesException, FolioException {
+	public String darDescripcion(String codF, int numR) throws PersistenciaException, RevisionException, FolioException {
 		
 		String desc = "";
 		
@@ -126,7 +127,7 @@ public class Fachada {
 			iPoolConexiones.liberarConexion(iConexion, true);
 		} else {
 			iPoolConexiones.liberarConexion(iConexion, true);
-			throw new RevisionesException("No existe revision con el numero dado");
+			throw new RevisionException("No existe revision con el numero dado");
 		}
 		return desc;
 	}

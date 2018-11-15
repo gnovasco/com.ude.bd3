@@ -1,5 +1,6 @@
 package com.ude.obligatorio.persistencia.daos;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -104,7 +105,7 @@ public class DAOFoliosMySQL implements IDAOFolios{
     }   // insert
 
 
-    public Folio find(IConexion iConexion,String cod) throws PersistenciaException, FolioException {
+    public Folio find(IConexion iConexion,String cod) throws PersistenciaException {
     	
     	ConexionMySQL conMySQL = (ConexionMySQL)iConexion;
         Connection con = conMySQL.getCon();
@@ -130,7 +131,7 @@ public class DAOFoliosMySQL implements IDAOFolios{
             rs.close();
             pstmt.close();
         }
-        catch (SQLException e) {
+        catch (FolioException | SQLException e) {
             throw new PersistenciaException("Error cerrando la conexion.", e);
         } 
         
