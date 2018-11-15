@@ -11,7 +11,9 @@ import java.sql.Statement;
 import java.sql.SQLException;
 
 import com.ude.obligatorio.logica.Folio;
+import com.ude.obligatorio.logica.Revision;
 import com.ude.obligatorio.logica.excepciones.FolioException;
+import com.ude.obligatorio.logica.excepciones.LogicaException;
 import com.ude.obligatorio.logica.excepciones.PersistenciaException;
 import com.ude.obligatorio.persistencia.daos.DAOFoliosArchivo;
 import com.ude.obligatorio.persistencia.daos.DAOFoliosMySQL;
@@ -30,6 +32,8 @@ public class TestPersistenciaArchivo {
 
 			Folio f1  = new Folio("FGH-0015", "La comuna contra la señora con 38 gatos", 5);
 			Folio f2  = new Folio("BBD-1278", "Otro folio de prueba", 2);
+			
+			
 			
 			DAOFoliosArchivo folios = new DAOFoliosArchivo();
 			
@@ -57,12 +61,31 @@ public class TestPersistenciaArchivo {
 			if (folios.esVacio(icon))
 				System.out.println("no hay folios!");
 			else
-				System.out.println("hay folios!");			
+				System.out.println("hay folios!");	
 			
+			Folio f4  = new Folio("GGN-1278", "Otro folio de prueba", 69);
+			folios.insert(icon, f4);
 			
+			int cantRev = f4.cantidadRevisiones(icon);
+			
+			String cantRevStr = Integer.toString(cantRev);
+			System.out.println(cantRevStr);
+			
+			//intenta borrar revisiones cuando no las tiene
+			f4.borrarRevisiones(icon);
+			
+			Revision rev1 = new Revision(++cantRev, "De prueba");
+			f4.addRevision(icon, rev1);
+			
+			cantRev = f4.cantidadRevisiones(icon);			
+			cantRevStr = Integer.toString(cantRev);
+			System.out.println(cantRevStr);	
+			
+			//borra todas las revisiones
+			f4.borrarRevisiones(icon);
 			
 		} 
-		catch (FolioException | PersistenciaException e1) {
+		catch (FolioException | PersistenciaException | LogicaException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}

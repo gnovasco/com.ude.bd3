@@ -112,10 +112,10 @@ public class DAORevisionesArchivo implements IDAORevisiones{
 
 	@Override
 	public void insBack(IConexion iConexion, Revision rev) throws PersistenciaException {
-		int cantRev = largo(iConexion);
-		String numRev = Integer.toString(cantRev++);
+		//int cantRev = largo(iConexion);
+		//String numRev = Integer.toString(cantRev++);
 
-        String ruta = pathRevisiones + numRev + codigoFolio + ".txt";
+        String ruta = pathRevisiones + rev.getNumero() + "-" +codigoFolio + ".txt";
 
         try {
 	        File file = new File(ruta);
@@ -126,7 +126,8 @@ public class DAORevisionesArchivo implements IDAORevisiones{
 	        
 	        FileWriter fw = new FileWriter(file);
 	        BufferedWriter bw = new BufferedWriter(fw);
-	        bw.write(rev.getNumero());
+	        String cantRevStr = Integer.toString(rev.getNumero());
+	        bw.write(cantRevStr);
 	        bw.newLine();
 	        bw.write(rev.getDescripcion());
 	        bw.newLine();
