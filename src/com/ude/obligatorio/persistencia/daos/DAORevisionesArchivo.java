@@ -1,8 +1,11 @@
 package com.ude.obligatorio.persistencia.daos;
 
+import com.ude.obligatorio.configuracion.Configuracion;
 import com.ude.obligatorio.logica.Folio;
 import com.ude.obligatorio.logica.Revision;
+import com.ude.obligatorio.logica.excepciones.FolioException;
 import com.ude.obligatorio.logica.excepciones.PersistenciaException;
+import com.ude.obligatorio.logica.excepciones.RevisionException;
 import com.ude.obligatorio.logica.valueObjects.VOFolio;
 import com.ude.obligatorio.logica.valueObjects.VORevision;
 import com.ude.obligatorio.poolConexiones.interfaces.IConexion;
@@ -20,17 +23,22 @@ import java.util.List;
 public class DAORevisionesArchivo implements IDAORevisiones{
 	
 	private String codigoFolio;
+	private String pathRevisiones;
 
-    public DAORevisionesArchivo(String codFol) {
+    public DAORevisionesArchivo(String codFol) throws RevisionException {
     	codigoFolio = codFol;
+    	
+    	try {
+    		pathRevisiones = Configuracion.getProperty("pathRevisiones");
+		} catch (IOException e) {
+			throw new RevisionException("Error de archivo.");
+		}     	
     } 	
 	
 	public int largo(IConexion iConexion) {
 		int cantRev = 0;
-		
-    	String rutaRevisiones = "/archivos/revisiones/";
-    	
-        File carpetaRevisiones = new File(rutaRevisiones);
+		  	
+        File carpetaRevisiones = new File(pathRevisiones);
         File[] revisiones;
         
         if(carpetaRevisiones.isDirectory()) {
@@ -49,10 +57,8 @@ public class DAORevisionesArchivo implements IDAORevisiones{
         String revDesc;
         int revNum;
         List<VORevision> revisiones = new ArrayList<>();
-        
-    	String rutaRevisiones = "/archivos/revisiones/";
-    	
-        File carpetaRevisiones = new File(rutaRevisiones);
+            	
+        File carpetaRevisiones = new File(pathRevisiones);
         File[] archivos;
         
         try {
@@ -84,9 +90,8 @@ public class DAORevisionesArchivo implements IDAORevisiones{
 	}
 	
 	public void borrarRevisiones(IConexion iConexion) throws PersistenciaException {
-    	String rutaRevisiones = "/archivos/revisiones/";
     	
-        File carpetaRevisiones = new File(rutaRevisiones);
+        File carpetaRevisiones = new File(pathRevisiones);
         File[] archivos;
         
         try {
@@ -107,10 +112,10 @@ public class DAORevisionesArchivo implements IDAORevisiones{
 
 	@Override
 	public void insBack(IConexion iConexion, Revision rev) throws PersistenciaException {
-		int cantRev = largo(iConexion);
-		String numRev = Integer.toString(cantRev++);
+		//int cantRev = largo(iConexion);
+		//String numRev = Integer.toString(cantRev++);
 
-        String ruta = "/archivos/revisiones/" + numRev + codigoFolio + ".txt";
+        String ruta = pathRevisiones + rev.getNumero() + "-" +codigoFolio + ".txt";
 
         try {
 	        File file = new File(ruta);
@@ -121,8 +126,11 @@ public class DAORevisionesArchivo implements IDAORevisiones{
 	        
 	        FileWriter fw = new FileWriter(file);
 	        BufferedWriter bw = new BufferedWriter(fw);
-	        bw.write(rev.getNumero());
+	        String cantRevStr = Integer.toString(rev.getNumero());
+	        bw.write(cantRevStr);
+	        bw.newLine();
 	        bw.write(rev.getDescripcion());
+	        bw.newLine();
 	        bw.write(codigoFolio);
 	        
 	        bw.close(); 
@@ -139,10 +147,8 @@ public class DAORevisionesArchivo implements IDAORevisiones{
 		
 		String numRev = Integer.toString(numero);
 		Revision rev = null;
-		
-    	String rutaRevisiones = "/archivos/revisiones/";
-    	
-        File carpetaRevisiones = new File(rutaRevisiones);
+		   	
+        File carpetaRevisiones = new File(pathRevisiones);
         File[] archivos;
         
         try {

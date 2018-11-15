@@ -172,6 +172,7 @@ public class DAORevisionesMySQL implements IDAORevisiones {
         try {
             String query = consultas.listarRevisiones();
             PreparedStatement pstmt = con.prepareStatement(query);
+            pstmt.setString(1, codigoFolio);
             ResultSet rs = pstmt.executeQuery();
 
             while (rs.next()) {
@@ -205,6 +206,7 @@ public class DAORevisionesMySQL implements IDAORevisiones {
         try {
         	String query = consultas.borrarFolioRevisiones();
             PreparedStatement pstmt = con.prepareStatement(query);
+            pstmt.setString(1, codigoFolio);
             pstmt.executeUpdate();
             pstmt.close();
         }

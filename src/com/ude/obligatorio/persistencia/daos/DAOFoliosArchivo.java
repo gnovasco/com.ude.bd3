@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.ude.obligatorio.configuracion.Configuracion;
 import com.ude.obligatorio.logica.Folio;
 import com.ude.obligatorio.logica.excepciones.FolioException;
 import com.ude.obligatorio.logica.excepciones.PersistenciaException;
@@ -21,7 +22,15 @@ import com.ude.obligatorio.poolConexiones.interfaces.IConexion;
 
 public class DAOFoliosArchivo implements IDAOFolios{
 	
-    public DAOFoliosArchivo() {
+	private String pathFolios;
+	
+	
+    public DAOFoliosArchivo() throws FolioException{
+    	try {
+			pathFolios = Configuracion.getProperty("pathFolios");
+		} catch (IOException e) {
+			throw new FolioException("Error de archivo.");
+		} 	
     } 
     
 	public boolean member(IConexion con, String cod) throws PersistenciaException{				
@@ -29,7 +38,7 @@ public class DAOFoliosArchivo implements IDAOFolios{
         boolean isMember = false;
 		
         try {
-            String ruta = "/archivos/folios/" + cod + ".txt"; //importar ruta desde ConexionArchivo
+            String ruta = pathFolios + cod + ".txt"; 
             File file = new File(ruta);
 
             if (file.exists()) {
@@ -57,9 +66,10 @@ public class DAOFoliosArchivo implements IDAOFolios{
             
             String folPagString = Integer.toString(folPag);
 
-            String ruta = "/archivos/folios/" + folCod + ".txt";
+            String ruta = pathFolios + folCod + ".txt";
 
             File file = new File(ruta);
+            //System.out.println(ruta);
             // Si el archivo no existe es creado
             if (!file.exists()) {
                 file.createNewFile();
@@ -68,7 +78,9 @@ public class DAOFoliosArchivo implements IDAOFolios{
             FileWriter fw = new FileWriter(file);
             BufferedWriter bw = new BufferedWriter(fw);
             bw.write(folCod);
+            bw.newLine();
             bw.write(folCar);
+            bw.newLine();
             bw.write(folPagString);
             
             bw.close();            
@@ -88,7 +100,7 @@ public class DAOFoliosArchivo implements IDAOFolios{
         
         try {
        
-        	String ruta = "/archivos/folios/" + cod + ".txt"; 	
+        	String ruta = pathFolios + cod + ".txt"; 	
             FileReader f = new FileReader(ruta);
             BufferedReader b = new BufferedReader(f);
             
@@ -116,9 +128,9 @@ public class DAOFoliosArchivo implements IDAOFolios{
     	
     	try {
 	    	//borramos revisiones del Folio
-	        String rutaRevisiones = "/archivos/revisiones/";
+    		String pathRevisiones = Configuracion.getProperty("pathRevisiones");
 	        
-	        File carpeta = new File(rutaRevisiones);
+	        File carpeta = new File(pathRevisiones);
 	        File[] archivos;
 	        if(carpeta.exists()) {
 	            if(carpeta.isDirectory()) {
@@ -133,7 +145,7 @@ public class DAOFoliosArchivo implements IDAOFolios{
 	        }
 	        
 	        //borramos el Folio
-	    	String rutaFolios = "/archivos/folios/" + cod + ".txt"; 
+	    	String rutaFolios = pathFolios + cod + ".txt"; 
 	    	file = new File(rutaFolios);
 	    	file.delete();
     	} 
@@ -152,9 +164,8 @@ public class DAOFoliosArchivo implements IDAOFolios{
         
         try {
         	
-            String ruta = "/archivos/folios/";
             String ext = "txt";
-            File carpeta = new File(ruta);
+            File carpeta = new File(pathFolios);
             File[] archivos;
             if(carpeta.exists()) {
                 if(carpeta.isDirectory()) {
@@ -185,16 +196,15 @@ public class DAOFoliosArchivo implements IDAOFolios{
 
 	@Override
 	public boolean esVacio(IConexion con) {
-		boolean res = true;
+		boolean res = false;
 		
-        String ruta = "/archivos/folios/";
-        File carpeta = new File(ruta);
+        File carpeta = new File(pathFolios);
         File[] archivos;
         
         if(carpeta.exists()) {
             if(carpeta.isDirectory()) {
                 archivos = carpeta.listFiles();
-                res = (archivos.length != 0);
+                res = (archivos.length == 0);
             }
         }
         return res;
@@ -213,13 +223,12 @@ public class DAOFoliosArchivo implements IDAOFolios{
         
         try {
 
-        	String rutaFolios = "/archivos/folios/";
-        	String rutaRevisiones = "/archivos/revisiones/";
+        	String pathRevisiones = Configuracion.getProperty("pathRevisiones");
         	
-            File carpetaFolios = new File(rutaFolios);
+            File carpetaFolios = new File(pathFolios);
             File[] folios;
  
-            File carpetaRevisiones = new File(rutaRevisiones);
+            File carpetaRevisiones = new File(pathRevisiones);
             File[] revisiones;  
                                   
             if(carpetaFolios.isDirectory()) {

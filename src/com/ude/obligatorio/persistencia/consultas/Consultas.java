@@ -4,7 +4,7 @@ public class Consultas {
 
     // consultas Folio
     public String insertarFolio() {
-        return "INSERT INTO Folio (codigo, caratula, paginas) VALUES (?, ?, ?)";
+        return "INSERT INTO Folios (codigo, caratula, paginas) VALUES (?, ?, ?)";
     }
     
     public String listarFolios() {
