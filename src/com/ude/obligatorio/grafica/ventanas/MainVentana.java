@@ -1,7 +1,9 @@
 package com.ude.obligatorio.grafica.ventanas;
 
+import java.awt.BorderLayout;
 import java.awt.EventQueue;
 import java.awt.Font;
+import java.awt.GridLayout;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,25 +12,35 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
+
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 public class MainVentana {
 
 	private JFrame frame;
-
+	private String[] options =  {"Agregar Folio", "Agregar Revision", 
+			"Borrar Folio y Revisiones", "Dar Descripcion Revision", 
+			"Ver Folio mas Revisado", "Listar Folios", "Listar Revisiones"};
+	
+	private JComboBox comboBox = new JComboBox();
+	
+	
 	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					MainVentana window = new MainVentana();
-					window.frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
+		 * Launch the application.
+		 */
+		public static void main(String[] args) {
+			EventQueue.invokeLater(new Runnable() {
+				public void run() {
+					try {
+						MainVentana window = new MainVentana();
+						window.frame.setVisible(true);
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
 				}
-			}
-		});
+			});
 	}
 
 	/**
@@ -36,6 +48,7 @@ public class MainVentana {
 	 */
 	public MainVentana() {
 		initialize();
+		setVisible(false);
 	}
 
 	/**
@@ -51,39 +64,58 @@ public class MainVentana {
 		lblGestionDeFolios.setFont(new Font("Tahoma", Font.BOLD, 16));
 		lblGestionDeFolios.setBounds(146, 21, 156, 17);
 		frame.getContentPane().add(lblGestionDeFolios);
-		
-List<String> ls = new ArrayList<String>(); 
-		
-		ls.add("Agregar Folio");
-		ls.add("Agregar Revision");
-		ls.add("Borrar Folio y Revisiones");
-		ls.add("Dar Descripcion Revision");
-		ls.add("Ver Folio mas Revisado");
-		ls.add("Listar Folios");
-		ls.add("Listar Revisiones");
-		
-		JComboBox comboBox = new JComboBox(ls.toArray());
-		comboBox.setModel(new DefaultComboBoxModel(new String[] {"Agregar Folio", "Agregar Revision", "Borrar Folio y Revisione", "Dar Descripcion Revision", "Ver Folio mas Revisado", "Listar Folios", "Listar Revisiones"}));
+	
+		comboBox.setModel(new DefaultComboBoxModel(options));
 		comboBox.setBounds(72, 67, 309, 22);
 		frame.getContentPane().add(comboBox);
 		
 		//fillComboBox(comboBox);
 		JButton btnIr = new JButton("Ir");
+		btnIr.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				goToWindow();
+			}
+		});
 		btnIr.setBounds(182, 121, 89, 23);
 		frame.getContentPane().add(btnIr);
 	}
-	
-	private void fillComboBox(JComboBox comboBox) {
-		List<String> ls = new ArrayList<String>(); 
-		
-		ls.add("Agregar Folio");
-		ls.add("Agregar Revision");
-		ls.add("Borrar Folio y Revisiones");
-		ls.add("Dar Descripcion Revision");
-		ls.add("Ver Folio mas Revisado");
-		ls.add("Listar Folios");
-		ls.add("Listar Revisiones");
-		
-		comboBox.setModel(new DefaultComboBoxModel(ls.toArray()));
+
+	private void goToWindow() {
+		String window = (String)comboBox.getSelectedItem();
+		switch (window) {
+        case "Agregar Folio":
+        	AgregarFolioVentana folVen = new AgregarFolioVentana();
+        	folVen.setVisible(true);
+            break;
+        case "Agregar Revision":
+        	AgregarRevisionVentana revVen = new AgregarRevisionVentana();
+        	revVen.setVisible(true);
+            break;
+        case "Borrar Folio y Revisiones":
+        	BorrarFolioRevisionesVentana borRev = new BorrarFolioRevisionesVentana();
+        	borRev.setVisible(true);
+            break;
+        case "Dar Descripcion Revision":
+        	DarDescripcionVentana desRev = new DarDescripcionVentana();
+        	desRev.setVisible(true);
+            break;
+        case "Ver Folio mas Revisado":
+        	FolioMasRevisadoVentana folRev = new FolioMasRevisadoVentana();
+        	folRev.setVisible(true);
+            break;
+        case "Listar Folios":
+        	ListarFoliosVentana listFol = new ListarFoliosVentana();
+        	listFol.setVisible(true);
+            break;
+        case "Listar Revisiones":
+        	SeleccionarCodigoListaRevVentana listRev = new SeleccionarCodigoListaRevVentana();
+        	listRev.setVisible(true);
+            break;
+        default:
+            throw new IllegalArgumentException("Invalid day of the week: " + window);
+		}
 	}
+    public void setVisible(boolean visible) {
+        frame.setVisible(visible);
+    }
 }

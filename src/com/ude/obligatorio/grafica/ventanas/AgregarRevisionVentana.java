@@ -1,40 +1,34 @@
 package com.ude.obligatorio.grafica.ventanas;
 
-import java.awt.EventQueue;
+import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import java.awt.Font;
+import javax.swing.JOptionPane;
 import javax.swing.JTextField;
-import javax.swing.JButton;
+
+import com.ude.obligatorio.grafica.GraficaModel;
+import com.ude.obligatorio.grafica.controladores.AgregarFolioControlador;
+import com.ude.obligatorio.grafica.controladores.AgregarRevisionesControlador;
 
 public class AgregarRevisionVentana {
 
 	private JFrame frame;
 	private JTextField descFol;
 	private JTextField codFol;
+	private GraficaModel graficaM;
+	private AgregarRevisionesControlador controlador = new AgregarRevisionesControlador();
 
-	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					AgregarRevisionVentana window = new AgregarRevisionVentana();
-					window.frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
 
 	/**
 	 * Create the application.
 	 */
 	public AgregarRevisionVentana() {
 		initialize();
+		setVisible(false);
 	}
 
 	/**
@@ -43,7 +37,7 @@ public class AgregarRevisionVentana {
 	private void initialize() {
 		frame = new JFrame();
 		frame.setBounds(100, 100, 429, 211);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
 		
 		JLabel lblDescripcion = new JLabel("Descripcion:");
@@ -57,10 +51,20 @@ public class AgregarRevisionVentana {
 		frame.getContentPane().add(descFol);
 		
 		JButton cancelar = new JButton("Cancelar");
+		cancelar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				frame.dispose();
+			}
+		});
 		cancelar.setBounds(123, 138, 89, 23);
 		frame.getContentPane().add(cancelar);
 		
 		JButton guardar = new JButton("Guardar");
+		guardar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				addRevision();
+			}
+		});
 		guardar.setBounds(222, 138, 89, 23);
 		frame.getContentPane().add(guardar);
 		
@@ -78,6 +82,19 @@ public class AgregarRevisionVentana {
 		codFol.setColumns(10);
 		codFol.setBounds(140, 97, 159, 20);
 		frame.getContentPane().add(codFol);
+	}
+	public void setVisible(boolean visible) {
+		frame.setVisible(visible);
+    }
+	
+	private void addRevision() {
+		graficaM = controlador.addRevision(descFol.getText(), codFol.getText());
+		if(graficaM.getMensajeError() != null) {
+			JOptionPane.showMessageDialog(frame, graficaM.getMensajeError(),"Error",JOptionPane.ERROR_MESSAGE);
+		} else {
+			JOptionPane.showMessageDialog(frame, graficaM.getMensajeExito(),"",JOptionPane.INFORMATION_MESSAGE);
+		}
+		
 	}
 
 }

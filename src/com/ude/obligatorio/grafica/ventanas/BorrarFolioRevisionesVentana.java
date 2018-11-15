@@ -4,36 +4,33 @@ import java.awt.EventQueue;
 
 import javax.swing.JFrame;
 import javax.swing.JTextField;
+
+import com.ude.obligatorio.grafica.GraficaModel;
+import com.ude.obligatorio.grafica.controladores.AgregarRevisionesControlador;
+import com.ude.obligatorio.grafica.controladores.BorrarFolioRevisionesControlador;
+
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+
 import java.awt.Font;
 import javax.swing.JButton;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 public class BorrarFolioRevisionesVentana {
 
 	private JFrame frame;
 	private JTextField codigo;
+	private GraficaModel graficaM;
+	private BorrarFolioRevisionesControlador controlador = new BorrarFolioRevisionesControlador();
 
-	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					BorrarFolioRevisionesVentana window = new BorrarFolioRevisionesVentana();
-					window.frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
 
 	/**
 	 * Create the application.
 	 */
 	public BorrarFolioRevisionesVentana() {
 		initialize();
+		setVisible(false);
 	}
 
 	/**
@@ -42,7 +39,7 @@ public class BorrarFolioRevisionesVentana {
 	private void initialize() {
 		frame = new JFrame();
 		frame.setBounds(100, 100, 370, 185);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
 		
 		codigo = new JTextField();
@@ -56,10 +53,20 @@ public class BorrarFolioRevisionesVentana {
 		frame.getContentPane().add(label);
 		
 		JButton button = new JButton("Cancelar");
+		button.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				frame.dispose();
+			}
+		});
 		button.setBounds(79, 95, 89, 23);
 		frame.getContentPane().add(button);
 		
 		JButton btnBorrar = new JButton("Borrar");
+		btnBorrar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				deleteRev();
+			}
+		});
 		btnBorrar.setBounds(178, 95, 89, 23);
 		frame.getContentPane().add(btnBorrar);
 		
@@ -67,6 +74,18 @@ public class BorrarFolioRevisionesVentana {
 		lblBorrarFoliosY.setFont(new Font("Tahoma", Font.BOLD, 16));
 		lblBorrarFoliosY.setBounds(69, 11, 233, 17);
 		frame.getContentPane().add(lblBorrarFoliosY);
+	}
+	public void setVisible(boolean visible) {
+        frame.setVisible(visible);
+    }
+	private void deleteRev() {
+		graficaM = controlador.deleteRev(codigo.getText());
+		if(graficaM.getMensajeError() != null) {
+			JOptionPane.showMessageDialog(frame, graficaM.getMensajeError(),"Error",JOptionPane.ERROR_MESSAGE);
+		} else {
+			JOptionPane.showMessageDialog(frame, graficaM.getMensajeExito(),"",JOptionPane.INFORMATION_MESSAGE);
+		}
+		
 	}
 
 }

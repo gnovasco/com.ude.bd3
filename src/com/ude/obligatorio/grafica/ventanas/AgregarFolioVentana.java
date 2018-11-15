@@ -1,12 +1,17 @@
 package com.ude.obligatorio.grafica.ventanas;
 
-import java.awt.EventQueue;
-
-import javax.swing.JFrame;
-import javax.swing.JTextField;
-import javax.swing.JLabel;
 import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
 import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JTextField;
+
+import com.ude.obligatorio.grafica.GraficaModel;
+import com.ude.obligatorio.grafica.controladores.AgregarFolioControlador;
 
 public class AgregarFolioVentana {
 
@@ -16,28 +21,16 @@ public class AgregarFolioVentana {
 	private JTextField nrPaginas;
 	private JLabel lblNoPaginas;
 	private JLabel lblCaratula;
+	private GraficaModel graficaM;
+	private AgregarFolioControlador folioCon = new AgregarFolioControlador();
 
-	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					AgregarFolioVentana window = new AgregarFolioVentana();
-					window.frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
 
 	/**
 	 * Create the application.
 	 */
 	public AgregarFolioVentana() {
 		initialize();
+		setVisible(false);
 	}
 
 	/**
@@ -46,7 +39,7 @@ public class AgregarFolioVentana {
 	private void initialize() {
 		frame = new JFrame();
 		frame.setBounds(100, 100, 407, 241);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
 		
 		caratula = new JTextField();
@@ -80,10 +73,20 @@ public class AgregarFolioVentana {
 		frame.getContentPane().add(lblCaratula);
 		
 		JButton cancelar = new JButton("Cancelar");
+		cancelar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				frame.dispose();
+			}
+		});
 		cancelar.setBounds(124, 150, 89, 23);
 		frame.getContentPane().add(cancelar);
 		
 		JButton guardar = new JButton("Guardar");
+		guardar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				addFolio();
+			}
+		});
 		guardar.setBounds(223, 150, 89, 23);
 		frame.getContentPane().add(guardar);
 		
@@ -91,5 +94,18 @@ public class AgregarFolioVentana {
 		lblAltaDeFolio.setFont(new Font("Tahoma", Font.BOLD, 16));
 		lblAltaDeFolio.setBounds(130, 27, 159, 17);
 		frame.getContentPane().add(lblAltaDeFolio);
+	}
+	
+	public void setVisible(boolean visible) {
+        frame.setVisible(visible);
+    }
+	private void addFolio() {
+		graficaM = folioCon.addFolio(codigo.getText(), caratula.getText(), Integer.parseInt(nrPaginas.getText()));
+		if(graficaM.getMensajeError() != null) {
+			JOptionPane.showMessageDialog(frame, graficaM.getMensajeError(),"Error",JOptionPane.ERROR_MESSAGE);
+		} else {
+			JOptionPane.showMessageDialog(frame, graficaM.getMensajeExito(),"",JOptionPane.INFORMATION_MESSAGE);
+		}
+		
 	}
 }
