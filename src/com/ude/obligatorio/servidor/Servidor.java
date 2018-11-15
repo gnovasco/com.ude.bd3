@@ -7,6 +7,7 @@ import java.rmi.registry.LocateRegistry;
 
 import com.ude.obligatorio.configuracion.Configuracion;
 import com.ude.obligatorio.logica.Fachada;
+import com.ude.obligatorio.logica.excepciones.LogicaException;
 
 
 
@@ -35,9 +36,9 @@ public class Servidor {
 		} catch (IOException e) {
 			e.printStackTrace();
 			System.exit(2);
-		} catch (ClassNotFoundException e) {
+		} catch (LogicaException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
-			System.exit(3);
 		}
 
 	}

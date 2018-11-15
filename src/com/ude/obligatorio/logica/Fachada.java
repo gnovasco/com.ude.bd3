@@ -2,6 +2,8 @@ package com.ude.obligatorio.logica;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.rmi.RemoteException;
+import java.rmi.server.UnicastRemoteObject;
 import java.util.List;
 
 import com.ude.obligatorio.logica.excepciones.FolioException;
@@ -18,13 +20,15 @@ import com.ude.obligatorio.poolConexiones.PoolConexionesMySQL;
 import com.ude.obligatorio.poolConexiones.interfaces.IConexion;
 import com.ude.obligatorio.poolConexiones.interfaces.IPoolConexiones;
 
+import com.ude.obligatorio.logica.IFachada;
+
 import com.ude.obligatorio.configuracion.Configuracion;
 
-public class Fachada {
+public class Fachada extends UnicastRemoteObject implements IFachada {	
 	private IDAOFolios diccioFol;
 	private IPoolConexiones iPoolConexiones;
 	
-	public Fachada () throws LogicaException {
+	public Fachada () throws RemoteException, LogicaException {
 		try {
 
 			String driver = Configuracion.getProperty("driver");   
@@ -138,6 +142,7 @@ public class Fachada {
 		iPoolConexiones.liberarConexion(iConexion, true);
 		return folios;
 	}
+	
 	public List<VORevision> listarRevisiones(String codF) throws PersistenciaException, LogicaException, FolioException{
 		IConexion iConexion = iPoolConexiones.obtenerConexion(true);
 		
