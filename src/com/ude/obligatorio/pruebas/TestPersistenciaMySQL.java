@@ -11,7 +11,9 @@ import java.sql.Statement;
 import java.sql.SQLException;
 
 import com.ude.obligatorio.logica.Folio;
+import com.ude.obligatorio.logica.Revision;
 import com.ude.obligatorio.logica.excepciones.FolioException;
+import com.ude.obligatorio.logica.excepciones.LogicaException;
 import com.ude.obligatorio.logica.excepciones.PersistenciaException;
 import com.ude.obligatorio.persistencia.daos.DAOFoliosMySQL;
 import com.ude.obligatorio.poolConexiones.interfaces.IConexion;
@@ -37,8 +39,115 @@ public class TestPersistenciaMySQL {
 			
 			folios.insert(icon, f1);
 			
+			con.close();
+			con = DriverManager.getConnection(url, "root", "root");
+			icon = new ConexionMySQL(con);
+			
+			folios.insert(icon, f2);
+
+			con.close();
+			con = DriverManager.getConnection(url, "root", "root");
+			icon = new ConexionMySQL(con);			
+			
+			if (folios.member(icon, f1.getCodigo()))
+				System.out.println("lujo!");
+
+			con.close();
+			con = DriverManager.getConnection(url, "root", "root");
+			icon = new ConexionMySQL(con);			
+			
+			if (folios.member(icon, f2.getCodigo()))
+				System.out.println("lujo!");
+
+			con.close();
+			con = DriverManager.getConnection(url, "root", "root");
+			icon = new ConexionMySQL(con);			
+			
+			Folio f3 = folios.find(icon, f1.getCodigo());
+			
+			con.close();
+			con = DriverManager.getConnection(url, "root", "root");
+			icon = new ConexionMySQL(con);
+			
+			folios.insert(icon, f3);
+
+			con.close();
+			con = DriverManager.getConnection(url, "root", "root");
+			icon = new ConexionMySQL(con);			
+			
+			folios.delete(icon, f3.getCodigo());
+
+			con.close();
+			con = DriverManager.getConnection(url, "root", "root");
+			icon = new ConexionMySQL(con);			
+			
+			if (folios.esVacio(icon))
+				System.out.println("no hay folios!");
+			else
+				System.out.println("hay folios!");
+
+			con.close();
+			con = DriverManager.getConnection(url, "root", "root");
+			icon = new ConexionMySQL(con);			
+			
+			folios.delete(icon, f2.getCodigo());
+
+			con.close();
+			con = DriverManager.getConnection(url, "root", "root");
+			icon = new ConexionMySQL(con);			
+			
+			if (folios.esVacio(icon))
+				System.out.println("no hay folios!");
+			else
+				System.out.println("hay folios!");	
+
+			con.close();
+			con = DriverManager.getConnection(url, "root", "root");
+			icon = new ConexionMySQL(con);			
+			
+			Folio f4  = new Folio("GGN-1278", "Otro folio de prueba", 69);
+			folios.insert(icon, f4);
+
+			con.close();
+			con = DriverManager.getConnection(url, "root", "root");
+			icon = new ConexionMySQL(con);			
+			
+			int cantRev = f4.cantidadRevisiones(icon);
+			
+			String cantRevStr = Integer.toString(cantRev);
+			System.out.println(cantRevStr);
+
+			con.close();
+			con = DriverManager.getConnection(url, "root", "root");
+			icon = new ConexionMySQL(con);			
+			
+			//intenta borrar revisiones cuando no las tiene
+			f4.borrarRevisiones(icon);
+
+			con.close();
+			con = DriverManager.getConnection(url, "root", "root");
+			icon = new ConexionMySQL(con);			
+			
+			Revision rev1 = new Revision(++cantRev, "De prueba");
+			f4.addRevision(icon, rev1);
+
+			con.close();
+			con = DriverManager.getConnection(url, "root", "root");
+			icon = new ConexionMySQL(con);			
+			
+			cantRev = f4.cantidadRevisiones(icon);			
+			cantRevStr = Integer.toString(cantRev);
+			System.out.println(cantRevStr);	
+
+			con.close();
+			con = DriverManager.getConnection(url, "root", "root");
+			icon = new ConexionMySQL(con);			
+			
+			//borra todas las revisiones
+			f4.borrarRevisiones(icon);
+			
 		} 
-		catch (SQLException | FolioException | PersistenciaException e1) {
+		catch (SQLException | FolioException | PersistenciaException | LogicaException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}

@@ -252,13 +252,13 @@ public class DAOFoliosMySQL implements IDAOFolios{
             query = consultas.borrarFolioRevisiones();
             pstmt = con.prepareStatement(query);
             pstmt.setString(1, cod);
-            pstmt.executeQuery();
+            pstmt.executeUpdate();
             
             // Eliminar el folio.
             query = consultas.borrarFolio();
             pstmt = con.prepareStatement(query);
             pstmt.setString(1, cod);
-            pstmt.executeQuery();
+            pstmt.executeUpdate();
             
             pstmt.close();
         }
