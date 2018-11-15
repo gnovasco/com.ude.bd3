@@ -1,10 +1,17 @@
 package com.ude.obligatorio.logica.valueObjects;
 
-public class VOFolio {
+import java.io.Serializable;
 
-    private String codigo;
+public class VOFolio implements Serializable {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	private String codigo;
     private String caratula;
     private int paginas;
+    
 
     public VOFolio(String cod,String car, int pag){
 

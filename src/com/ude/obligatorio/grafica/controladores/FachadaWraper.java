@@ -9,6 +9,7 @@ import com.ude.obligatorio.configuracion.Configuracion;
 import com.ude.obligatorio.logica.IFachada;
 
 public class FachadaWraper {
+
 	
 	private static FachadaWraper instance;
 	
@@ -19,8 +20,8 @@ public class FachadaWraper {
 	}
 	
 	private void obtenerFachadaRemota() throws FileNotFoundException, IOException, NotBoundException  {
-		String ipServidor = Configuracion.getProperty("ipServidor");
-		String puertoServidor = Configuracion.getProperty("puertoServidor");
+		String ipServidor = Configuracion.getProperty("ServidorIp");
+		String puertoServidor = Configuracion.getProperty("ServidorPuerto");
 		fachada = (IFachada) Naming.lookup("//" + ipServidor + ":" + puertoServidor + "/fachada");
 	}
 	

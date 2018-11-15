@@ -25,6 +25,10 @@ import com.ude.obligatorio.logica.IFachada;
 import com.ude.obligatorio.configuracion.Configuracion;
 
 public class Fachada extends UnicastRemoteObject implements IFachada {	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private IDAOFolios diccioFol;
 	private IPoolConexiones iPoolConexiones;
 	
@@ -57,6 +61,7 @@ public class Fachada extends UnicastRemoteObject implements IFachada {
 		
 	}
 	
+	@Override
 	public void agregarFolio(VOFolio vof) throws PersistenciaException, FolioException {
 		
 		IConexion iConexion = iPoolConexiones.obtenerConexion(true);

@@ -37,9 +37,9 @@ public class Servidor {
 			e.printStackTrace();
 			System.exit(2);
 		} catch (LogicaException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
+			System.exit(3);
+		} 
 
 	}
 	

@@ -47,7 +47,7 @@ public class PoolConexionesMySQL implements IPoolConexiones {
 	 */
 	public static PoolConexionesMySQL getPoolConexiones(String url,String user,String password,int tamanio,String driver) {
 		if(poolConexiones == null){
-			poolConexiones = new PoolConexionesMySQL("","","",10,"");
+			poolConexiones = new PoolConexionesMySQL(url,user,password,10,driver);
 		}
 		return poolConexiones;
 	}

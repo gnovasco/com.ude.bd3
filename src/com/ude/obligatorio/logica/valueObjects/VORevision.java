@@ -1,8 +1,14 @@
 package com.ude.obligatorio.logica.valueObjects;
 
-public class VORevision {
+import java.io.Serializable;
 
-    private int numero;
+public class VORevision  implements Serializable {
+
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	private int numero;
     private String description;
     private String codFolio;
 
