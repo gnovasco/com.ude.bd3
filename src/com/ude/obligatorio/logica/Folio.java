@@ -32,9 +32,7 @@ public class Folio {
 		IPersistenciaFabrica fabRev = null;
 		try {
 			String nomFab = Configuracion.getProperty("nomFab");
-			
-			System.out.println(nomFab);
-			
+						
 			fabRev = (IPersistenciaFabrica) Class.forName(nomFab).newInstance();
 			
 			secuencia = fabRev.crearRevisiones(cod);

@@ -127,7 +127,9 @@ public class DAORevisionesArchivo implements IDAORevisiones{
 	        FileWriter fw = new FileWriter(file);
 	        BufferedWriter bw = new BufferedWriter(fw);
 	        bw.write(rev.getNumero());
+	        bw.newLine();
 	        bw.write(rev.getDescripcion());
+	        bw.newLine();
 	        bw.write(codigoFolio);
 	        
 	        bw.close(); 

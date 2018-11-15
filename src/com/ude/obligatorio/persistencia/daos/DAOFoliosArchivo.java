@@ -69,6 +69,7 @@ public class DAOFoliosArchivo implements IDAOFolios{
             String ruta = pathFolios + folCod + ".txt";
 
             File file = new File(ruta);
+            //System.out.println(ruta);
             // Si el archivo no existe es creado
             if (!file.exists()) {
                 file.createNewFile();
@@ -77,7 +78,9 @@ public class DAOFoliosArchivo implements IDAOFolios{
             FileWriter fw = new FileWriter(file);
             BufferedWriter bw = new BufferedWriter(fw);
             bw.write(folCod);
+            bw.newLine();
             bw.write(folCar);
+            bw.newLine();
             bw.write(folPagString);
             
             bw.close();            
@@ -193,7 +196,7 @@ public class DAOFoliosArchivo implements IDAOFolios{
 
 	@Override
 	public boolean esVacio(IConexion con) {
-		boolean res = true;
+		boolean res = false;
 		
         File carpeta = new File(pathFolios);
         File[] archivos;
@@ -201,7 +204,7 @@ public class DAOFoliosArchivo implements IDAOFolios{
         if(carpeta.exists()) {
             if(carpeta.isDirectory()) {
                 archivos = carpeta.listFiles();
-                res = (archivos.length != 0);
+                res = (archivos.length == 0);
             }
         }
         return res;
