@@ -26,6 +26,23 @@ public class MainVentana {
 	
 	private JComboBox comboBox = new JComboBox();
 	
+	
+	/**
+		 * Launch the application.
+		 */
+		public static void main(String[] args) {
+			EventQueue.invokeLater(new Runnable() {
+				public void run() {
+					try {
+						MainVentana window = new MainVentana();
+						window.frame.setVisible(true);
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+			});
+	}
+
 	/**
 	 * Create the application.
 	 */
